@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Dto.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Core.Interfaces.Services
 {
     public interface UserServicesI
     {
-        Task AddAsync(string email, string password, string? fullname = null);
+        Task AddAsync(UserCreateRequestDto userCreateDto);
 
     }
 }

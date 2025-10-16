@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.User;
+using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,10 @@ namespace Api.Controllers
 
         }
         [HttpPost]
-        public async Task<ActionResult>  Create(string email, string password, string? fullname = null)
+        public async Task<ActionResult>  Create([FromBody] UserCreateRequestDto userCreateDto)
         {
            
-                await _userServicesI.AddAsync(email, password, fullname);
+                await _userServicesI.AddAsync(userCreateDto);
                 return Ok();
           
         }

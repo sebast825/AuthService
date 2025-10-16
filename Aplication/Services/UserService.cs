@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.User;
+using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using System;
@@ -17,9 +18,9 @@ namespace Aplication.Services
             _userRepositoryI = userRepositoryI;
         }
 
-        public async Task AddAsync(string email, string password, string? fullname = null)
+        public async Task AddAsync(UserCreateRequestDto userCreateDto)
         {
-            User user = new User { Email = email, Password = password, FullName = fullname };
+            User user = new User { Email = userCreateDto.Email, Password = userCreateDto.Password, FullName = userCreateDto.FullName};
             await _userRepositoryI.AddAsync(user);
         }
     }
