@@ -57,3 +57,6 @@ nunit-*.xml
 .vs/
 bin/
 obj/
+
+*.user
+*.suo
