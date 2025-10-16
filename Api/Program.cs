@@ -17,6 +17,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+db.Database.EnsureCreated();//create DB if not exist
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
