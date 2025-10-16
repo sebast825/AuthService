@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces.Repositories
@@ -22,5 +23,13 @@ namespace Infrastructure.Interfaces.Repositories
             await _dataContext.Set<User>().AddAsync(user);
             await _dataContext.SaveChangesAsync();
         }
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _dataContext.Set<User>()
+                .Where(u => u.Email == email)
+                .FirstOrDefaultAsync();
+        }
+
+
     }
 }

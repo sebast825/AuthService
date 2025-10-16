@@ -10,6 +10,7 @@ namespace Core.Interfaces.Repositories
     public interface UserRepositoryI
     {
         Task AddAsync(User user);
+        Task<User?> GetByEmailAsync(string email);
 
     }
 }
