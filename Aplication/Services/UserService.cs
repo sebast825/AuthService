@@ -22,7 +22,18 @@ namespace Aplication.Services
         {
             User user = new User { Email = userCreateDto.Email, Password = userCreateDto.Password, FullName = userCreateDto.FullName};
             user.Validate();
+            if(await this.EmailAlreadyUsed(user.Email))
+            {
+                throw new InvalidOperationException("El Email ya está en uso");
+            }
             await _userRepositoryI.AddAsync(user);
         }
+
+        private async Task<bool> EmailAlreadyUsed(string email)
+        {
+            return await _userRepositoryI.GetByEmailAsync(email) != null;
+             
+        }
     }
+
 }
