@@ -11,6 +11,9 @@ namespace Core.Entities
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
 
-        public string? FullName { get; set; };
+        public string? FullName { get; set; }
+
+        public ICollection<LoginAttempt> LoginAttempts { get; set; } = new List<LoginAttempt>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }
