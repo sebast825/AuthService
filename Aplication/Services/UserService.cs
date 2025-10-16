@@ -21,6 +21,7 @@ namespace Aplication.Services
         public async Task AddAsync(UserCreateRequestDto userCreateDto)
         {
             User user = new User { Email = userCreateDto.Email, Password = userCreateDto.Password, FullName = userCreateDto.FullName};
+            user.Validate();
             await _userRepositoryI.AddAsync(user);
         }
     }
