@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Core.Dto.Auth
 {
-    internal class LoginRequestDto
+    public class LoginRequestDto
     {
+        public string Email { get; set; } 
+        public string Password { get; set; }
     }
 }

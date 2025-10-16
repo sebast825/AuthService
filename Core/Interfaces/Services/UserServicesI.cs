@@ -1,4 +1,5 @@
-﻿using Core.Dto.User;
+﻿using Core.Dto.Auth;
+using Core.Dto.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Core.Interfaces.Services
     public interface UserServicesI
     {
         Task AddAsync(UserCreateRequestDto userCreateDto);
-
+        Task ValidateCredentialsAsync(LoginRequestDto loginDto);
     }
 }
