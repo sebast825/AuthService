@@ -60,3 +60,4 @@ obj/
 
 *.user
 *.suo
+**/appsettings.json
