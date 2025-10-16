@@ -16,10 +16,11 @@ namespace Infrastructure.Interfaces.Repositories
         public UserRepository(DataContext dataContext) {
             _dataContext = dataContext;
         }
-        public async Task AddAsync(string email, string password, string? fullname = null)
+        public async Task AddAsync(User user)
         {
-            User user = new User { Email = email, Password = password, FullName = fullname };
+            
             await _dataContext.Set<User>().AddAsync(user);
+            await _dataContext.SaveChangesAsync();
         }
     }
 }
