@@ -24,9 +24,10 @@ namespace Aplication.Services
 
         public async Task AddAsync(UserCreateRequestDto userCreateDto)
         {
-            string hashPassword = this.HashPassword(userCreateDto.Password);
-            User user = new User { Email = userCreateDto.Email, Password = hashPassword, FullName = userCreateDto.FullName };
+            User user = new User { Email = userCreateDto.Email, Password = userCreateDto.Password, FullName = userCreateDto.FullName };
             user.Validate();
+            //add hashpassword after validate, if not validation don't work on password
+            user.Password = this.HashPassword(userCreateDto.Password);
 
             if (await this.EmailAlreadyUsed(user.Email))
             {
