@@ -8,6 +8,6 @@ namespace Core.Interfaces.Services
 {
     public interface JwtServiceI
     {
-        public string GenerateAccessToken();
+        public string GenerateAccessToken(string id);
     }
 }
