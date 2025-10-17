@@ -13,14 +13,18 @@ namespace Aplication.UseCases
     public class AuthUseCase
     {
         private readonly UserServicesI _userServicesI;
-        public AuthUseCase(UserServicesI userServicesI) {
+        private readonly JwtServiceI _jwtServiceI;
+        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI)
+        {
             _userServicesI = userServicesI;
+            _jwtServiceI = jwtServiceI;
         }
 
-        public async Task Auth(LoginRequestDto loginDto)
+        public async Task<string> Auth(LoginRequestDto loginDto)
         {
             _userServicesI.ValidateCredentialsAsync(loginDto);
-            throw new NotImplementedException();
+            string jwtToken =_jwtServiceI.GenerateAccessToken("1");
+            return jwtToken;
         }
     }
 }

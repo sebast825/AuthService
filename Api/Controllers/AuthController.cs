@@ -1,4 +1,5 @@
 ﻿using Aplication.Services;
+using Aplication.UseCases;
 using Core.Dto.Auth;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Identity.Data;
@@ -11,15 +12,18 @@ namespace Api.Controllers
     public class AuthController : Controller
     {
         private readonly UserServicesI _userServiceI;
-        public AuthController(UserServicesI userServiceI)
+        private readonly AuthUseCase _authUseCase;
+        public AuthController(UserServicesI userServiceI, AuthUseCase authUseCase)
         {
             _userServiceI = userServiceI;
+            _authUseCase = authUseCase;
         }
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginRequestDto loginDto)
+        public async Task<string> Login(LoginRequestDto loginDto)
         {
-            await _userServiceI.ValidateCredentialsAsync(loginDto);
-            return Ok();
+            //await _userServiceI.ValidateCredentialsAsync(loginDto);
+            return await _authUseCase.Auth(loginDto);
+           // return Ok();
         }
 
         /* [HttpPost("logout")]

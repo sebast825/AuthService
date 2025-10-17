@@ -1,4 +1,5 @@
 using Aplication.Services;
+using Aplication.UseCases;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
@@ -15,6 +16,9 @@ builder.Services.AddDbContext<DataContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<UserRepositoryI, UserRepository > ();
 builder.Services.AddScoped<UserServicesI, UserService>();
+builder.Services.AddScoped<JwtServiceI,JwtService> ();
+builder.Services.AddScoped<AuthUseCase>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
