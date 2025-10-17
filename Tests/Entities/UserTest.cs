@@ -1,5 +1,6 @@
 ﻿using Core.Constants;
 using Core.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Tests.Entities
             var userPassword = "passwordpasswordpassword";
             User user = new User { Email = userEmail, Password = userPassword };
 
-            var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
+            var ex = Assert.ThrowsException<FormatException>(() => user.Validate());
             Assert.AreEqual(ErrorMessages.EmailFormat, ex.Message);
         }
         [TestMethod]
@@ -40,7 +41,7 @@ namespace Tests.Entities
             var userPassword = "pass";
             User user = new User { Email = userEmail, Password = userPassword};
 
-            var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
+            var ex = Assert.ThrowsException<FormatException>(() => user.Validate());
             Assert.AreEqual(ErrorMessages.PasswordLengthMin, ex.Message);
         }
 

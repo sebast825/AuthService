@@ -10,6 +10,7 @@ namespace Core.Constants
     {
         public const string PasswordLengthMin = "La contraseña debe tener al menos 8 caracteres";
         public const string EmailFormat = "El formato del email es inválido";
-        public const string EmailNotAviable= "No es posible usar este email. Por favor, pruebe otro";
+        public const string EmailNotAviable = "No es posible usar este email. Por favor, pruebe otro";
+        public const string InvalidCredentials = "Las credenciales son invalidas";
     }
 }
