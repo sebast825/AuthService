@@ -13,7 +13,7 @@ namespace Tests.Entities
 
 
         [TestMethod]
-        public void ValidateEmail_WithValidEmail_NotThrowException()
+        public void Validate_WithValidEmail_NotThrowException()
         {
             var userEmail = "carmelo@gmail.com";
             var userPassword = "passwordpasswordpassword";
@@ -23,7 +23,7 @@ namespace Tests.Entities
           
         }
         [TestMethod]
-        public void ValidateEmail_WithInvalidEmail_ThrowException()
+        public void Validate_WithInvalidEmail_ThrowException()
         {
             var userEmail = "carmelogmail.com";
             var userPassword = "passwordpasswordpassword";
@@ -33,7 +33,7 @@ namespace Tests.Entities
             Assert.AreEqual("Formato de email inválido",ex.Message);
         }
         [TestMethod]
-        public void ValidatePassword_WithShortPassword_ThrowException()
+        public void Validate_WithShortPassword_ThrowException()
         {
             var userEmail = "carmelo@gmail.com";
             var userPassword = "pass";
