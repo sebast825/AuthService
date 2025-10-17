@@ -22,24 +22,26 @@ namespace Core.Entities
 
         public void Validate()
         {
-   
-            if (!IsValidEmail(Email))
-                throw new FormatException("Formato de email inválido");
 
-            // Validaciones de negocio con excepción custom
+            ValidteEmail();
+            ValidatePassword();
+        }
+        private void ValidatePassword()
+        {
             if (Password?.Length < 8)
                 throw new FormatException("La contraseña debe tener al menos 8 caracteres");
         }
-        private bool IsValidEmail(string email)
+
+        private void ValidteEmail()
         {
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
+                var addr = new System.Net.Mail.MailAddress(Email);
+                
             }
             catch
             {
-                return false;
+                throw new FormatException("Formato de email inválido");
             }
         }
     }
