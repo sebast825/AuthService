@@ -1,4 +1,5 @@
-﻿using Core.Dto.Auth;
+﻿using Core.Constants;
+using Core.Dto.Auth;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces.Repositories;
@@ -29,7 +30,7 @@ namespace Aplication.Services
 
             if (await this.EmailAlreadyUsed(user.Email))
             {
-                throw new InvalidOperationException("El Email ya está en uso");
+                throw new InvalidOperationException(ErrorMessages.EmailNotAviable);
             }
 
             await _userRepositoryI.AddAsync(user);
@@ -40,13 +41,13 @@ namespace Aplication.Services
             User? user = await _userRepositoryI.GetByEmailAsync(loginDto.Email);
             if (user == null)
             {
-                throw new InvalidCredentialException("Credenciales invalidas");
+                throw new InvalidCredentialException(ErrorMessages.InvalidCredentials);
 
             }
             bool matchMassword = this.MatchPassword(loginDto.Password, user.Password);
             if (!matchMassword)
             {
-                throw new InvalidCredentialException("Credenciales invalidas");
+                throw new InvalidCredentialException(ErrorMessages.InvalidCredentials);
 
             }
         }
