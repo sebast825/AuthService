@@ -1,10 +1,12 @@
 ﻿using Aplication.Services;
+using Core.Constants;
 using Core.Dto.Auth;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Security.Authentication;
 
 namespace Tests.Services
 {
@@ -20,24 +22,79 @@ namespace Tests.Services
             _mockUserRepo = new Mock<UserRepositoryI>();
             _userService = new UserService(_mockUserRepo.Object);
         }
+        /*
+          password: "string",
+         hashPasword : "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW"
+          */
+
 
         [TestMethod]
-        public void ValidateCredentialsAsync_ValidCredentials_NotThrowException()
+        public async Task ValidateCredentialsAsync_ValidCredentials_NotThrowException()
         {
             // Configuración específica de este test
 
             var userEmail = "carmelo@gmail.com";
-            var userPassword = "passwordpasswordpassword";
-            
+            var userPassword = "string";
+            string hashPasword = "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW";
+
+         
             _mockUserRepo.Setup(r => r.GetByEmailAsync(userEmail))
-                    .Returns(Task.FromResult(new User { Email = userEmail, Password = userPassword }));
+                    .Returns(Task.FromResult(new User { Email = userEmail, Password = hashPasword }));
 
             LoginRequestDto loginDto = new LoginRequestDto()
             {
                 Email = userEmail,
                 Password = userPassword
             };
-            _userService.ValidateCredentialsAsync(loginDto);
+
+            await _userService.ValidateCredentialsAsync(loginDto);
+
+        }
+
+        [TestMethod]
+        public async Task ValidateCredentialsAsync_UserNotExist_ThrowException()
+        {
+            // Configuración específica de este test
+
+            var userEmail = "carmelo@gmail.com";
+            var userPassword = "passwordpasswordpassword";
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(userEmail))
+                    .Returns(Task.FromResult<User?>(null));
+
+            LoginRequestDto loginDto = new LoginRequestDto()
+            {
+                Email = userEmail,
+                Password = userPassword
+            };
+          
+
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _userService.ValidateCredentialsAsync(loginDto));
+            Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
+        }
+
+        [TestMethod]
+        public async Task ValidateCredentialsAsync_WrongPassword_ThrowException2()
+        {
+            // Configuración específica de este test
+
+            var userEmail = "carmelo@gmail.com";
+            var userPassword = "testste";
+            string hashPasword = "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW";
+     
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(userEmail))
+                           .Returns(Task.FromResult(new User { Email = userEmail, Password = hashPasword }));
+
+            LoginRequestDto loginDto = new LoginRequestDto()
+            {
+                Email = userEmail,
+                Password = "userPassword"
+            };
+
+
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _userService.ValidateCredentialsAsync(loginDto));
+            Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
         }
     }
 }
