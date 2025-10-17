@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,10 +27,11 @@ namespace Core.Entities
             ValidteEmail();
             ValidatePassword();
         }
+
         private void ValidatePassword()
         {
             if (Password?.Length < 8)
-                throw new FormatException("La contraseña debe tener al menos 8 caracteres");
+                throw new FormatException(ErrorMessages.PasswordLengthMin);
         }
 
         private void ValidteEmail()
@@ -41,7 +43,7 @@ namespace Core.Entities
             }
             catch
             {
-                throw new FormatException("Formato de email inválido");
+                throw new FormatException(ErrorMessages.EmailFormat);
             }
         }
     }

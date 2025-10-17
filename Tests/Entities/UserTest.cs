@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Constants;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Tests.Entities
             User user = new User { Email = userEmail, Password = userPassword };
 
             var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
-            Assert.AreEqual("Formato de email inválido",ex.Message);
+            Assert.AreEqual(ErrorMessages.EmailFormat, ex.Message);
         }
         [TestMethod]
         public void Validate_WithShortPassword_ThrowException()
@@ -40,7 +41,7 @@ namespace Tests.Entities
             User user = new User { Email = userEmail, Password = userPassword};
 
             var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
-            Assert.AreEqual("La contraseña debe tener al menos 8 caracteres", ex.Message);
+            Assert.AreEqual(ErrorMessages.PasswordLengthMin, ex.Message);
         }
 
     }
