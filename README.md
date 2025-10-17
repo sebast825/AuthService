@@ -30,10 +30,12 @@ AuthServiceSolution/
 │      └─ RecordLoginAttempt.cs
 │
 └─ Api/                    
-   ├─ Controllers/
-   │   └─ AuthController.cs
-   ├─ Program.cs
-   ├─ appsettingExample.json
+│  ├─ Controllers/
+│  │   └─ AuthController.cs
+│  ├─ Program.cs
+│  ├─ appsettingExample.json
+│
+└─ Tests/    
 ```
   
 ## Caso de uso: LoginUser
