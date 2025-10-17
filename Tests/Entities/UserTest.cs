@@ -15,11 +15,9 @@ namespace Tests.Entities
         [TestMethod]
         public void ValidateEmail_WithValidEmail_NotThrowException()
         {
-            var userName = "Manolo Perez";
             var userEmail = "carmelo@gmail.com";
             var userPassword = "passwordpasswordpassword";
-            User user = new User { Email = userEmail, Password = userPassword, FullName= userName };
-        
+            User user = new User { Email = userEmail, Password = userPassword};        
 
             user.Validate(); 
           
@@ -27,15 +25,22 @@ namespace Tests.Entities
         [TestMethod]
         public void ValidateEmail_WithInvalidEmail_ThrowException()
         {
-            var userName = "Manolo Perez";
             var userEmail = "carmelogmail.com";
             var userPassword = "passwordpasswordpassword";
-            User user = new User { Email = userEmail, Password = userPassword, FullName = userName };
-
-
+            User user = new User { Email = userEmail, Password = userPassword };
 
             var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
             Assert.AreEqual("Formato de email inválido",ex.Message);
+        }
+        [TestMethod]
+        public void ValidatePassword_WithShortPassword_ThrowException()
+        {
+            var userEmail = "carmelo@gmail.com";
+            var userPassword = "pass";
+            User user = new User { Email = userEmail, Password = userPassword};
+
+            var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
+            Assert.AreEqual("La contraseña debe tener al menos 8 caracteres", ex.Message);
         }
 
     }
