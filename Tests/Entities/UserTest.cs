@@ -24,6 +24,19 @@ namespace Tests.Entities
             user.Validate(); 
           
         }
-      
+        [TestMethod]
+        public void ValidateEmail_WithInvalidEmail_ThrowException()
+        {
+            var userName = "Manolo Perez";
+            var userEmail = "carmelogmail.com";
+            var userPassword = "passwordpasswordpassword";
+            User user = new User { Email = userEmail, Password = userPassword, FullName = userName };
+
+
+
+            var ex = Assert.ThrowsExactly<FormatException>(() => user.Validate());
+            Assert.AreEqual("Formato de email inválido",ex.Message);
+        }
+
     }
 }
