@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Repositories
 {
-    public interface RefreshTokenI
+    public interface RefreshTokenRepositoryI
     {
         Task AddAsync (RefreshToken token);
     }
