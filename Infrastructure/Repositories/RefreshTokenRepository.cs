@@ -1,9 +1,11 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Repositories;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,14 @@ namespace Infrastructure.Repositories
         {
             await _dataContext.Set<RefreshToken>().AddAsync(token);
             await _dataContext.SaveChangesAsync();  
+        }
+
+      
+
+        public async Task<RefreshToken?> GetAsync(Expression<Func<RefreshToken, bool>> predicate)
+        {
+            return await _dataContext.Set<RefreshToken>().FirstOrDefaultAsync(predicate);
+
         }
     }
 }
