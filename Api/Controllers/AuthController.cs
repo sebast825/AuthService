@@ -21,7 +21,7 @@ namespace Api.Controllers
             _authUseCase = authUseCase;
         }
         [HttpPost("login")]
-        public async Task<string> Login(LoginRequestDto loginDto)
+        public async Task<AuthResponseDto> Login(LoginRequestDto loginDto)
         {
             //await _userServiceI.ValidateCredentialsAsync(loginDto);
             return await _authUseCase.LoginAsync(loginDto);

@@ -15,17 +15,30 @@ namespace Aplication.UseCases
     {
         private readonly UserServicesI _userServicesI;
         private readonly JwtServiceI _jwtServiceI;
-        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI)
+        private readonly RefreshTokenServiceI _refreshTokenServiceI;
+        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI  )
         {
             _userServicesI = userServicesI;
             _jwtServiceI = jwtServiceI;
+            _refreshTokenServiceI = refreshTokenServiceI;
         }
 
-        public async Task<string> LoginAsync(LoginRequestDto loginDto)
+        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto)
         {
             UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
-            string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id);
-            return jwtToken;
+            string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
+            RefreshToken refreshToken = _refreshTokenServiceI.Create(userResponseDto.Id);
+
+            AuthResponseDto authResponseDto = new AuthResponseDto()
+            {
+                AccessToken = jwtToken,
+                RefreshToken = refreshToken.Token,
+                User = userResponseDto
+
+
+            };
+            return authResponseDto;
         }
+
     }
 }

@@ -53,7 +53,7 @@ namespace Aplication.Services
             }
             return new UserResponseDto()
             {
-                Id = user.Id.ToString(),
+                Id = user.Id,
                 FullName = user.FullName
             };
         }

@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<UserRepositoryI, UserRepository > ();
 builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();
+builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
 builder.Services.AddScoped<AuthUseCase>();
 
 
