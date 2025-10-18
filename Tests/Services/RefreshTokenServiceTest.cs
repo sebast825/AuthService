@@ -1,0 +1,39 @@
+﻿using Aplication.Services;
+using Core.Entities;
+using Core.Interfaces.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tests.Services
+{
+    [TestClass]
+    public class RefreshTokenServiceTest
+    {
+        private  RefreshTokenServiceI _refreshTokenServiceI;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _refreshTokenServiceI = new RefreshTokenService();
+        }
+
+        [TestMethod]
+        public void Create_ValidRefreshToken_ReturnToken()
+        {
+
+            int userId = 123;
+            RefreshToken token = _refreshTokenServiceI.Create(userId);
+
+            Assert.IsNotNull(token);
+            Assert.AreEqual(token.UserId, userId);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(token.Token));
+            Assert.IsTrue(token.ExpiresAt >  DateTime.UtcNow);
+            Assert.IsTrue(token.ExpiresAt < DateTime.UtcNow.AddDays(1).AddSeconds(5));
+        }
+    
+    }
+}
