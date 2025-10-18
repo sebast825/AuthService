@@ -2,8 +2,10 @@
 using Aplication.UseCases;
 using Core.Dto.Auth;
 using Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -24,6 +26,13 @@ namespace Api.Controllers
             //await _userServiceI.ValidateCredentialsAsync(loginDto);
             return await _authUseCase.LoginAsync(loginDto);
            // return Ok();
+        }
+        [HttpGet("check")]
+        [Authorize]
+        public IActionResult Check()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Ok(new { messagge = "Token Valido", userId });
         }
 
         /* [HttpPost("logout")]
