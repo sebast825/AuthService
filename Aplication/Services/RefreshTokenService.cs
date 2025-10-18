@@ -1,4 +1,5 @@
 ﻿using Azure.Core.GeoJson;
+using Core.Constants;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -42,7 +43,7 @@ namespace Aplication.Services
         {
             RefreshToken? refreshToken = await _refreshTokenRepositoryI.GetAsync(t => t.Token == token);
             if (refreshToken == null) {
-                throw new InvalidCredentialException("Token Invalido");
+                throw new InvalidCredentialException(ErrorMessages.InvalidToken);
             }
             refreshToken.Revoked = true;
             await _refreshTokenRepositoryI.UpdateAsync(refreshToken);
