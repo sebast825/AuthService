@@ -1,7 +1,9 @@
 ﻿using Aplication.Services;
 using Core.Entities;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,14 @@ namespace Tests.Services
     [TestClass]
     public class RefreshTokenServiceTest
     {
+        private Mock<RefreshTokenRepositoryI> _mockRefreshTokenRepo;
         private  RefreshTokenServiceI _refreshTokenServiceI;
 
         [TestInitialize]
         public void Setup()
         {
-            _refreshTokenServiceI = new RefreshTokenService();
+            _mockRefreshTokenRepo = new Mock<RefreshTokenRepositoryI>();
+            _refreshTokenServiceI = new RefreshTokenService(_mockRefreshTokenRepo.Object);
         }
 
         [TestMethod]
