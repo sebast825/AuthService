@@ -5,6 +5,7 @@ using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,17 @@ namespace Aplication.Services
             await _refreshTokenRepositoryI.AddAsync(token);
         }
 
+        public async Task RevokeRefreshToken(string token)
+        {
+            RefreshToken? refreshToken = await _refreshTokenRepositoryI.GetAsync(t => t.Token == token);
+            if (refreshToken == null) {
+                throw new InvalidCredentialException("Token Invalido");
+            }
+            refreshToken.Revoked = true;
+
+            throw new NotImplementedException();
+        }
+
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
@@ -49,6 +61,6 @@ namespace Aplication.Services
             return DateTime.UtcNow.AddDays(1);
         }
 
-     
+      
     }
 }

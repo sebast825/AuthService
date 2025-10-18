@@ -12,6 +12,6 @@ namespace Core.Interfaces.Services
     {
         RefreshToken Create(int userId);
         Task AddAsync(RefreshToken token);
-
+        Task RevokeRefreshToken(string token);
     }
 }
