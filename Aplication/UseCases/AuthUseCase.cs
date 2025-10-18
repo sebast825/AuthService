@@ -22,7 +22,7 @@ namespace Aplication.UseCases
 
         public async Task<string> Auth(LoginRequestDto loginDto)
         {
-            _userServicesI.ValidateCredentialsAsync(loginDto);
+            await _userServicesI.ValidateCredentialsAsync(loginDto);
             string jwtToken =_jwtServiceI.GenerateAccessToken("1");
             return jwtToken;
         }
