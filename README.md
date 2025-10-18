@@ -5,33 +5,21 @@ AuthServiceSolution/
 │
 ├─ Core/                       
 │  ├─ Entities/
-│  │   ├─ User.cs
-│  │   ├─ LoginAttempt.cs
-│  │   └─ RefreshToken.cs
 │  ├─ Interfaces/
-│     ├─ UserRepositoryI.cs
-│     ├─ LoginAttemptRepositoryI.cs
-│     └─ AuthServiceI.cs
+│  ├─ Constants/
 │
 ├─ Infrastructure/           
 │  ├─ Data/
 │  │   └─ DataContext.cs
-│  ├─ Repositories/
-│     ├─ UserRepository.cs
-│     ├─ LoginAttemptRepository.cs
-│     └─ RefreshTokenRepository.cs     
+│  ├─ Repositories/ 
 │
 ├─ Application/              
 │  ├─ Services/
-│  │   └─ AuthService.cs
 │  └─ UseCases/               
-│      ├─ LoginUser.cs
-│      ├─ RefreshTokenUseCase.cs
-│      └─ RecordLoginAttempt.cs
 │
 └─ Api/                    
 │  ├─ Controllers/
-│  │   └─ AuthController.cs
+│  ├─ Extensions/
 │  ├─ Program.cs
 │  ├─ appsettingExample.json
 │
