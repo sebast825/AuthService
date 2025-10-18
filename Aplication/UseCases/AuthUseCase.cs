@@ -1,5 +1,6 @@
 ﻿using Aplication.Services;
 using Core.Dto.Auth;
+using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces.Services;
 using System;
@@ -22,8 +23,8 @@ namespace Aplication.UseCases
 
         public async Task<string> Auth(LoginRequestDto loginDto)
         {
-            await _userServicesI.ValidateCredentialsAsync(loginDto);
-            string jwtToken =_jwtServiceI.GenerateAccessToken("1");
+            UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
+            string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id);
             return jwtToken;
         }
     }
