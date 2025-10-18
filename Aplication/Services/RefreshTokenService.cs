@@ -45,8 +45,7 @@ namespace Aplication.Services
                 throw new InvalidCredentialException("Token Invalido");
             }
             refreshToken.Revoked = true;
-
-            throw new NotImplementedException();
+            await _refreshTokenRepositoryI.UpdateAsync(refreshToken);
         }
 
         private string GenerateRefreshToken()
