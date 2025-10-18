@@ -21,7 +21,7 @@ namespace Aplication.UseCases
             _jwtServiceI = jwtServiceI;
         }
 
-        public async Task<string> Auth(LoginRequestDto loginDto)
+        public async Task<string> LoginAsync(LoginRequestDto loginDto)
         {
             UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
             string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id);

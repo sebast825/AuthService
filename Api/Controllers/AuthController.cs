@@ -22,7 +22,7 @@ namespace Api.Controllers
         public async Task<string> Login(LoginRequestDto loginDto)
         {
             //await _userServiceI.ValidateCredentialsAsync(loginDto);
-            return await _authUseCase.Auth(loginDto);
+            return await _authUseCase.LoginAsync(loginDto);
            // return Ok();
         }
 
