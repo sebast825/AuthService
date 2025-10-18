@@ -20,7 +20,7 @@ namespace Aplication.Services
         {
             _refreshTokenRepositoryI = refreshTokenRepositoryI;
         }
-        public RefreshToken Create(int userId)
+        public RefreshToken CreateRefreshToken(int userId)
         {
            
 

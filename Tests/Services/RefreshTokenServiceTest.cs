@@ -27,11 +27,11 @@ namespace Tests.Services
         }
 
         [TestMethod]
-        public void Create_ValidRefreshToken_ReturnToken()
+        public void CreateRefreshToken_ValidRefreshToken_ReturnToken()
         {
 
             int userId = 123;
-            RefreshToken token = _refreshTokenServiceI.Create(userId);
+            RefreshToken token = _refreshTokenServiceI.CreateRefreshToken(userId);
 
             Assert.IsNotNull(token);
             Assert.AreEqual(token.UserId, userId);

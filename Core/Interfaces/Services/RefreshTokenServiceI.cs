@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
 {
     public interface RefreshTokenServiceI
     {
-        RefreshToken Create(int userId);
+        RefreshToken CreateRefreshToken(int userId);
         Task AddAsync(RefreshToken token);
         Task RevokeRefreshToken(string token);
     }
