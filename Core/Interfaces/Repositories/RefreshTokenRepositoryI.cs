@@ -12,7 +12,7 @@ namespace Core.Interfaces.Repositories
     {
         Task AddAsync (RefreshToken token);
         Task<RefreshToken?> GetAsync(Expression<Func<RefreshToken, bool>> predicate);
-
+        Task UpdateAsync(RefreshToken token);
 
     }
 }

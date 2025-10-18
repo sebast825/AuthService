@@ -31,5 +31,11 @@ namespace Infrastructure.Repositories
             return await _dataContext.Set<RefreshToken>().FirstOrDefaultAsync(predicate);
 
         }
+
+        public async Task UpdateAsync(RefreshToken token)
+        {
+            _dataContext.Set<RefreshToken>().Update(token);
+            await _dataContext.SaveChangesAsync();
+        }
     }
 }
