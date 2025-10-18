@@ -37,7 +37,7 @@ namespace Aplication.Services
             await _userRepositoryI.AddAsync(user);
         }
 
-        public async Task ValidateCredentialsAsync(LoginRequestDto loginDto)
+        public async Task<UserResponseDto> ValidateCredentialsAsync(LoginRequestDto loginDto)
         {
             User? user = await _userRepositoryI.GetByEmailAsync(loginDto.Email);
             if (user == null)
@@ -51,6 +51,11 @@ namespace Aplication.Services
                 throw new InvalidCredentialException(ErrorMessages.InvalidCredentials);
 
             }
+            return new UserResponseDto()
+            {
+                Id = user.Id.ToString(),
+                FullName = user.FullName
+            };
         }
         private async Task<bool> EmailAlreadyUsed(string email)
         {

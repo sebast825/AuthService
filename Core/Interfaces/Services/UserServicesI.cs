@@ -11,6 +11,6 @@ namespace Core.Interfaces.Services
     public interface UserServicesI
     {
         Task AddAsync(UserCreateRequestDto userCreateDto);
-        Task ValidateCredentialsAsync(LoginRequestDto loginDto);
+        Task<UserResponseDto> ValidateCredentialsAsync(LoginRequestDto loginDto);
     }
 }
