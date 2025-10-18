@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Interfaces.Repositories
+namespace Infrastructure.Repositories
 {
     public class UserRepository : UserRepositoryI
     {

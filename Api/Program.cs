@@ -3,10 +3,10 @@ using Aplication.UseCases;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
-using Infrastructure.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 using Api.Extensions;
+using Infrastructure.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
