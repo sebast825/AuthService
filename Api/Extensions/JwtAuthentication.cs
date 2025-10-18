@@ -12,7 +12,7 @@ namespace Api.Extensions
         {
             var jwtKey = configuration["Jwt:Key"];
             var jwtIssuer = configuration["Jwt:Issuer"];
-            var jwtAudience = configuration["Jwt:Audience"]; // opcional
+            var jwtAudience = configuration["Jwt:Audience"]; 
 
             if (string.IsNullOrEmpty(jwtKey))
                 throw new Exception("Jwt:Key no está configurado en appsettings.json");
