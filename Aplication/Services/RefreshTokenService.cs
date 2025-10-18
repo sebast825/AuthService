@@ -1,5 +1,6 @@
 ﻿using Azure.Core.GeoJson;
 using Core.Entities;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,12 @@ namespace Aplication.Services
 {
     public class RefreshTokenService : RefreshTokenServiceI
     {
+
+        private readonly RefreshTokenRepositoryI _refreshTokenRepositoryI;
+        public RefreshTokenService(RefreshTokenRepositoryI refreshTokenRepositoryI)
+        {
+            _refreshTokenRepositoryI = refreshTokenRepositoryI;
+        }
         public RefreshToken Create(int userId)
         {
            
@@ -25,7 +32,10 @@ namespace Aplication.Services
             return refreshToken;
         
         }
-
+        public async Task AddAsync(RefreshToken token)
+        {
+            await _refreshTokenRepositoryI.AddAsync(token);
+        }
 
         private string GenerateRefreshToken()
         {
@@ -38,5 +48,7 @@ namespace Aplication.Services
         {
             return DateTime.UtcNow.AddDays(1);
         }
+
+     
     }
 }

@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.User;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace Core.Interfaces.Services
 {
     public interface RefreshTokenServiceI
     {
-        public RefreshToken Create(int userId);
+        RefreshToken Create(int userId);
+        Task AddAsync(RefreshToken token);
+
     }
 }
