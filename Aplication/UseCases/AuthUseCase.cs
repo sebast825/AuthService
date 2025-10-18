@@ -28,7 +28,7 @@ namespace Aplication.UseCases
             UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
             string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
             RefreshToken refreshToken = _refreshTokenServiceI.Create(userResponseDto.Id);
-
+            await _refreshTokenServiceI.AddAsync(refreshToken);
             AuthResponseDto authResponseDto = new AuthResponseDto()
             {
                 AccessToken = jwtToken,
