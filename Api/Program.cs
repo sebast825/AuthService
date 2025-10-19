@@ -21,7 +21,7 @@ builder.Services.AddScoped<RefreshTokenRepositoryI, RefreshTokenRepository>();
 builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();
 builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
-builder.Services.AddScoped<LoginAttemptsCacheServiceI,LoginAttemptsCacheService> ();
+builder.Services.AddScoped<LoginAttemptsCacheServiceI,EmailAttemptsService> ();
 
 builder.Services.AddScoped<AuthUseCase>();
 

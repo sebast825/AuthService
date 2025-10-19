@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface LoginAttemptsCacheServiceI
+    public interface EmailAttemptsServiceI
     {
-        bool IsBlocked(string email, string ip);
+        bool EmailIsBlocked(string email, string ip);
     }
 }

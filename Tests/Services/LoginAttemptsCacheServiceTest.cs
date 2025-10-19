@@ -21,7 +21,7 @@ namespace Tests.Services
         public void SetUp()
         {
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _LoginAttemptsCacheService = new LoginAttemptsCacheService(_cache);
+            _LoginAttemptsCacheService = new EmailAttemptsService(_cache);
         }
 
         [TestMethod]
