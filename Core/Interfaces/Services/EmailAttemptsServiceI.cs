@@ -9,5 +9,8 @@ namespace Core.Interfaces.Services
     public interface EmailAttemptsServiceI
     {
         bool EmailIsBlocked(string email);
+        void ResetAttempts(string key);
+        void IncrementFailedAttempts(string key);
+
     }
 }

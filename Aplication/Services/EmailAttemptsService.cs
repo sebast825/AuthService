@@ -21,18 +21,28 @@ namespace Aplication.Services
 
         public bool EmailIsBlocked(string emailKey)
         {
-            var emailAttempts = this.GetOrCreateLimit(emailKey);
+            var emailAttempts = this.GetOrCreateAttempts(emailKey);
             return emailAttempts >= _userLimit;
         }
 
-        private int GetOrCreateLimit(string key)
+        public void IncrementFailedAttempts(string key)
+        {
+            var attempts = GetOrCreateAttempts(key);
+            _cache.Set(key, attempts + 1, _window); // Reset counter after _window 
+        }
+        public void ResetAttempts(string key)
+        {
+            _cache.Remove(key);
+        }
+
+        private int GetOrCreateAttempts(string key)
         {
             int attempts = _cache.GetOrCreate<int>(key, e =>
             {
                 e.AbsoluteExpirationRelativeToNow = _window;
                 return 0;
             });
-            return attempts; 
+            return attempts;
         }
     }
 }
