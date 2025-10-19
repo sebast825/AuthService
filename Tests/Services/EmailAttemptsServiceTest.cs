@@ -42,6 +42,35 @@ namespace Tests.Services
             bool isBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
             Assert.IsFalse(isBlocked);
         }
-        
+
+        [TestMethod]
+        public void ResetAttempts_WithExistingAttempts_RevemosFromCache()
+        {
+            string email = "test@gmail.com";
+            int attempts = 4;
+            _cache.Set(email, attempts);
+            _EmailAttemptsServiceI.ResetAttempts(email);
+
+            Assert.AreEqual(_cache.Get(email), null);
+        }
+        [TestMethod]
+        public void IncrementAttempts_WithExistingAttempts_IncreasesCount()
+        {
+            string email = "test@gmail.com";
+            int attempts = 4;
+            _cache.Set(email, attempts);
+            _EmailAttemptsServiceI.IncrementAttempts(email);
+
+            Assert.AreEqual(_cache.Get(email), attempts+1);
+        }
+        [TestMethod]
+        public void IncrementAttempts_WithNotExistingAttempts_IncreasesCount()
+        {
+            string email = "test@gmail.com";
+            int attempts = 1;
+            _EmailAttemptsServiceI.IncrementAttempts(email);
+
+            Assert.AreEqual(_cache.Get(email), attempts);
+        }
     }
 }
