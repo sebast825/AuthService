@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,13 @@ namespace Aplication.Services
 {
     public class LoginAttemptsService : LoginAttemptsServiceI
     {
-        public Task AddAsync(LoginAttempt loginAttempt)
+        private readonly LoginAttemptRepositoryI _loginAttemptRepositoryI;
+        public LoginAttemptsService(LoginAttemptRepositoryI loginAttemptRepositoryI) {
+            _loginAttemptRepositoryI = loginAttemptRepositoryI;
+        }
+        public async Task AddAsync(LoginAttempt loginAttempt)
         {
-            throw new NotImplementedException();
+            await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
         }
 
         public LoginAttempt CreateLoginAttempt(int userId, string ip, bool success)
