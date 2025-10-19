@@ -16,13 +16,13 @@ namespace Aplication.UseCases
         private readonly UserServicesI _userServicesI;
         private readonly JwtServiceI _jwtServiceI;
         private readonly RefreshTokenServiceI _refreshTokenServiceI;
-        private readonly LoginAttemptsCacheService _loginAttemptsCacheService;
-        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI, LoginAttemptsCacheService loginAttemptsCacheService)
+        private readonly LoginAttemptsCacheServiceI _LoginAttemptsCacheServiceI;
+        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI, LoginAttemptsCacheServiceI loginAttemptsCacheService)
         {
             _userServicesI = userServicesI;
             _jwtServiceI = jwtServiceI;
             _refreshTokenServiceI = refreshTokenServiceI;
-            _loginAttemptsCacheService = loginAttemptsCacheService;
+            _LoginAttemptsCacheServiceI = loginAttemptsCacheService;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto)
@@ -43,7 +43,7 @@ namespace Aplication.UseCases
         }
         private bool HandleAttemptLogin(string email, string ip)
         {
-           return _loginAttemptsCacheService.IsBlocked(email, ip);
+           return _LoginAttemptsCacheServiceI.IsBlocked(email, ip);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Aplication.Services;
+using Core.Interfaces.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -13,14 +14,14 @@ namespace Tests.Services
     [TestClass]
     public class LoginAttemptsCacheServiceTest
     {
-        private  LoginAttemptsCacheService _service;
+        private LoginAttemptsCacheServiceI _LoginAttemptsCacheService;
         private  IMemoryCache _cache;
 
         [TestInitialize]
         public void SetUp()
         {
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _service = new LoginAttemptsCacheService(_cache);
+            _LoginAttemptsCacheService = new LoginAttemptsCacheService(_cache);
         }
 
         [TestMethod]
@@ -31,7 +32,7 @@ namespace Tests.Services
             _cache.Set(email, 5);
             _cache.Set(ip, 30);
 
-           bool isBlocked = _service.IsBlocked(email, ip);
+           bool isBlocked = _LoginAttemptsCacheService.IsBlocked(email, ip);
             Assert.IsTrue(isBlocked);
         }
         [TestMethod]
@@ -42,7 +43,7 @@ namespace Tests.Services
             _cache.Set(email, 4);
             _cache.Set(ip, 30);
 
-            bool isBlocked = _service.IsBlocked(email, ip);
+            bool isBlocked = _LoginAttemptsCacheService.IsBlocked(email, ip);
             Assert.IsTrue(isBlocked);
         }
         [TestMethod]
@@ -53,7 +54,7 @@ namespace Tests.Services
             _cache.Set(email, 5);
             _cache.Set(ip, 20);
 
-            bool isBlocked = _service.IsBlocked(email, ip);
+            bool isBlocked = _LoginAttemptsCacheService.IsBlocked(email, ip);
             Assert.IsTrue(isBlocked);
         }
         [TestMethod]
@@ -64,7 +65,7 @@ namespace Tests.Services
             _cache.Set(email, 3);
             _cache.Set(ip, 20);
 
-            bool isBlocked = _service.IsBlocked(email, ip);
+            bool isBlocked = _LoginAttemptsCacheService.IsBlocked(email, ip);
             Assert.IsFalse(isBlocked);
         }
     }

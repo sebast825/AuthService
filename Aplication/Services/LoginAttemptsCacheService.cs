@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Core.Interfaces.Services;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class LoginAttemptsCacheService
+    public class LoginAttemptsCacheService : LoginAttemptsCacheServiceI
     {
         private readonly IMemoryCache _cache;
         //range time until the cache restart
