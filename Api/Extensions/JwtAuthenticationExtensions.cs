@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Api.Extensions
 {
-    public static class JwtAuthentication
+    public static class JwtAuthenticationExtensions
     {
         // ---------------- JWT Authentication ----------------
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
