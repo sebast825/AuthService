@@ -9,7 +9,6 @@ namespace Core.Interfaces.Services
 {
     public interface LoginAttemptsServiceI
     {
-        Task AddAsync(LoginAttempt loginAttempt);
-        LoginAttempt CreateLoginAttempt(int userId, string ip, bool success);
+        Task AddAsync(int userId, string ip, bool success);
     }
 }

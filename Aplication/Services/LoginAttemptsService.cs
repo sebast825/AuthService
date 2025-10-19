@@ -15,12 +15,13 @@ namespace Aplication.Services
         public LoginAttemptsService(LoginAttemptRepositoryI loginAttemptRepositoryI) {
             _loginAttemptRepositoryI = loginAttemptRepositoryI;
         }
-        public async Task AddAsync(LoginAttempt loginAttempt)
+        public async Task AddAsync(int userId, string ip, bool success)
         {
+            LoginAttempt loginAttempt = CreateLoginAttempt(userId, ip,success);
             await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
         }
 
-        public LoginAttempt CreateLoginAttempt(int userId, string ip, bool success)
+        private LoginAttempt CreateLoginAttempt(int userId, string ip, bool success)
         {
             LoginAttempt loginAttempt = new LoginAttempt()
             {
