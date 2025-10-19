@@ -17,19 +17,14 @@ namespace Aplication.Services
         }
         public async Task AddAsync(int userId, string ip, bool success)
         {
-            LoginAttempt loginAttempt = CreateLoginAttempt(userId, ip,success);
-            await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
-        }
-
-        private LoginAttempt CreateLoginAttempt(int userId, string ip, bool success)
-        {
             LoginAttempt loginAttempt = new LoginAttempt()
             {
                 UserId = userId,
                 IpAddress = ip,
                 Success = success
             };
-            return loginAttempt;
+            await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
         }
+
     }
 }

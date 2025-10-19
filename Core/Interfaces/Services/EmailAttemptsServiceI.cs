@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
     {
         bool EmailIsBlocked(string email);
         void ResetAttempts(string key);
-        void IncrementFailedAttempts(string key);
+        void IncrementAttempts(string key);
 
     }
 }

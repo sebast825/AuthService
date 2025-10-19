@@ -25,7 +25,7 @@ namespace Aplication.Services
             return emailAttempts >= _userLimit;
         }
 
-        public void IncrementFailedAttempts(string key)
+        public void IncrementAttempts(string key)
         {
             var attempts = GetOrCreateAttempts(key);
             _cache.Set(key, attempts + 1, _window); // Reset counter after _window 
