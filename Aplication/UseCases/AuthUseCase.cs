@@ -1,4 +1,5 @@
 ﻿using Aplication.Services;
+using Core.Constants;
 using Core.Dto.Auth;
 using Core.Dto.User;
 using Core.Entities;
@@ -41,12 +42,20 @@ namespace Aplication.UseCases
             };
             return authResponseDto;
         }
-        private bool HandleAttemptLogin(string email,int userId, string ip)
+        private async Task HandleAttemptLogin(string email,int userId, string ip)
         {
            bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
             if (emailIsBlocked) {
-                _loginAttemptsServiceI.CreateLoginAttempt(userId, ip, true);
+                await _loginAttemptsServiceI.AddAsync(userId, ip, true);
+
             }
+            else
+            {
+                 await _loginAttemptsServiceI.AddAsync(userId, ip, false);
+                throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
+            }
+
         }
+
     }
 }

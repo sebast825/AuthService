@@ -13,5 +13,7 @@ namespace Core.Constants
         public const string EmailNotAviable = "No es posible usar este email. Por favor, pruebe otro";
         public const string InvalidCredentials = "Las credenciales son invalidas";
         public const string InvalidToken = "El token es invalido";
+        public const string MaxLoginAttemptsExceeded = "Demasiados intentos fallidos. Espere 5 minutos antes de intentar nuevamente.";
+
     }
 }
