@@ -21,7 +21,7 @@ builder.Services.AddScoped<RefreshTokenRepositoryI, RefreshTokenRepository>();
 builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();
 builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
-builder.Services.AddScoped<LoginAttemptsCacheServiceI,EmailAttemptsService> ();
+builder.Services.AddScoped<EmailAttemptsServiceI,EmailAttemptsService> ();
 
 builder.Services.AddScoped<AuthUseCase>();
 
@@ -31,6 +31,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//--------------------------EXTENSIONS
+builder.Services.AddIpRateLimit(builder.Configuration);
 //-----------------------------JWT---------------------------------------------
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
