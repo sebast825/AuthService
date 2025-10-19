@@ -8,6 +8,6 @@ namespace Core.Interfaces.Services
 {
     public interface EmailAttemptsServiceI
     {
-        bool EmailIsBlocked(string email, string ip);
+        bool EmailIsBlocked(string email);
     }
 }
