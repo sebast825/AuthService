@@ -56,3 +56,8 @@ AuthServiceSolution/
        • RefreshToken
        • Expiration
        • Datos mínimos del usuario (opcional)
+
+## Proximas Mejoras
+
+- Persistir los intentos fallidos de login en la base de datos usando un sistema de colas, para evitar saturar el pool de conexiones durante ataques de fuerza bruta.
+- Implementar middleware y configuración de proxies para capturar con precisión la IP real del cliente, mejorando seguridad, auditoría y bloqueos por IP en entornos de producción.
