@@ -31,9 +31,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//--------------------------EXTENSIONS
+//--------------------------EXTENSIONS----------------------------------------
 builder.Services.AddIpRateLimit(builder.Configuration);
-//-----------------------------JWT---------------------------------------------
+//-----------------------------JWT--------------------------------------------
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
 
