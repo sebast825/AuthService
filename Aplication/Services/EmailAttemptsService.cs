@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class LoginAttemptsCacheService : LoginAttemptsCacheServiceI
+    public class EmailAttemptsService : EmailAttemptsServiceI
     {
         private readonly IMemoryCache _cache;
         //range time until the cache restart
         private readonly TimeSpan _window = TimeSpan.FromMinutes(5);
         private readonly int _userLimit = 5;
      
-        public LoginAttemptsCacheService(IMemoryCache cache) {
+        public EmailAttemptsService(IMemoryCache cache) {
         _cache = cache;
         }
 
