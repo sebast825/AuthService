@@ -22,7 +22,7 @@ namespace Aplication.Services
         public bool IsBlocked(string email, string ip)
         {
 
-            return EmailIsBlocked(email) && IpIsBlocked(ip);
+            return EmailIsBlocked(email) || IpIsBlocked(ip);
 
         }
 
