@@ -1,4 +1,5 @@
 ﻿using Aplication.Services;
+using Core.Constants;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,6 +61,20 @@ namespace Tests.Services
 
             Assert.IsTrue(refreshToken.Revoked);
             
+        }
+        [TestMethod]
+        public async Task RevokeRefreshToken_InvalidToken_ThrowException()
+        {
+            string token = "abc";
+
+            _mockRefreshTokenRepo
+                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<RefreshToken, bool>>>()))
+                 .ReturnsAsync((RefreshToken?)null);
+  
+    
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenServiceI.RevokeRefreshToken(token));
+            Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
+
         }
 
 
