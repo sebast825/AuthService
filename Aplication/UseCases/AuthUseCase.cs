@@ -7,6 +7,7 @@ using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,54 +36,62 @@ namespace Aplication.UseCases
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
         {
+            await ThrowIfEmailIsBlockAsync(loginDto.Email, ipAddress, deviceInfo);
 
-            bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
+            try
+            {
+                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);                
+                _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
+                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
+
+                return await HandleTokenAsync(userResponseDto);
+            }
+            catch (InvalidCredentialException ex)
+            {
+                await HandleFailderAttemptAsync(loginDto.Email, ipAddress, deviceInfo);
+                throw;
+            }
+
+
+        }
+
+        private async Task ThrowIfEmailIsBlockAsync(string email, string ipAddress, string deviceInfo)
+        {
+            bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
             if (emailIsBlocked)
             {
-                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
             }
-            try
-            {
-                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
-                //await HandleAttemptLogin(loginDto.Email, userResponseDto.Id, "updateIp");
-                _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
-                
-                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress,deviceInfo);
-
-
-                string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
-                RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
-                await _refreshTokenServiceI.AddAsync(refreshToken);
-                AuthResponseDto authResponseDto = new AuthResponseDto()
-                {
-                    AccessToken = jwtToken,
-                    RefreshToken = refreshToken.Token,
-                    User = userResponseDto
-                };
-                return authResponseDto;
-
-
-            }
-            catch  (InvalidCredentialException ex){
-                _EmailAttemptsServiceI.IncrementAttempts(loginDto.Email);
-                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
-
-                bool nowIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
-                if (nowIsBlocked)
-                {
-                    throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
-                }
-
-                throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
-            }
-            catch (Exception ex) {
-                throw;
-            }
-           
         }
-       
+        private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
+        {
+            string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
+            RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
+            await _refreshTokenServiceI.AddAsync(refreshToken);
+            return new AuthResponseDto()
+            {
+                AccessToken = jwtToken,
+                RefreshToken = refreshToken.Token,
+                User = userResponseDto
+            };
+            
+        }
+        private async Task HandleFailderAttemptAsync(string email, string ipAddress, string deviceInfo)
+        {
+            _EmailAttemptsServiceI.IncrementAttempts(email);
+            await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
+
+            bool nowIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
+            if (nowIsBlocked)
+            {
+                throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
+            }
+
+            throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
+        }
+
 
     }
 }
