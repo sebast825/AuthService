@@ -1,9 +1,11 @@
 ﻿using Aplication.Services;
+using Azure.Core;
 using Core.Constants;
 using Core.Dto.Auth;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces.Services;
+using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +24,11 @@ namespace Aplication.UseCases
         private readonly EmailAttemptsServiceI _EmailAttemptsServiceI;
         private readonly UserLoginHistoryServiceI _loginAttemptsServiceI;
         private readonly SecurityLoginAttemptServiceI _securityLoginAttemptServiceI;
+        private readonly DataContext _dataContext;
         public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI,
             EmailAttemptsServiceI EmailAttemptsServiceI, UserLoginHistoryServiceI loginAttemptsServiceI,
-            SecurityLoginAttemptServiceI securityLoginAttemptServiceI)
+            SecurityLoginAttemptServiceI securityLoginAttemptServiceI,
+            DataContext dataContext)
         {
             _userServicesI = userServicesI;
             _jwtServiceI = jwtServiceI;
@@ -32,6 +36,7 @@ namespace Aplication.UseCases
             _EmailAttemptsServiceI = EmailAttemptsServiceI;
             _loginAttemptsServiceI = loginAttemptsServiceI;
             _securityLoginAttemptServiceI = securityLoginAttemptServiceI;
+            _dataContext = dataContext;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
@@ -40,11 +45,9 @@ namespace Aplication.UseCases
 
             try
             {
-                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);                
-                _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
-                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
+                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
 
-                return await HandleTokenAsync(userResponseDto);
+                return await HandleSuccessfulLoginAsync(userResponseDto, loginDto.Email, ipAddress, deviceInfo);
             }
             catch (InvalidCredentialException ex)
             {
@@ -65,19 +68,41 @@ namespace Aplication.UseCases
 
             }
         }
+
+        /* Record email attempt in DB and reset in cache.
+         * Call fn to generate tokens */
+        private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
+        {
+            _EmailAttemptsServiceI.ResetAttempts(email);
+            var transaction = await _dataContext.Database.BeginTransactionAsync();
+            try
+            {
+                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
+                AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
+                await transaction.CommitAsync();
+                return authResponseDto;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
         private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
         {
             string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
             RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
             await _refreshTokenServiceI.AddAsync(refreshToken);
+
             return new AuthResponseDto()
             {
                 AccessToken = jwtToken,
                 RefreshToken = refreshToken.Token,
                 User = userResponseDto
             };
-            
         }
+
         private async Task RegisterFailedLoginAndThrowAsync(string email, string ipAddress, string deviceInfo)
         {
             _EmailAttemptsServiceI.IncrementAttempts(email);
