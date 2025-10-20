@@ -44,7 +44,7 @@ namespace Aplication.UseCases
                 //await HandleAttemptLogin(loginDto.Email, userResponseDto.Id, "updateIp");
                 _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
                 
-                await _loginAttemptsServiceI.AddAsync(userResponseDto.Id, "ip", true);
+                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, "ip");
 
 
                 string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());

@@ -15,7 +15,7 @@ namespace Aplication.Services
         public LoginAttemptsService(LoginAttemptRepositoryI loginAttemptRepositoryI) {
             _loginAttemptRepositoryI = loginAttemptRepositoryI;
         }
-        public async Task AddAsync(int userId, string ip, bool success)
+        public async Task AddSuccessAttemptAsync(int userId, string ip)
         {
             UserLoginHistory loginAttempt = new UserLoginHistory()
             {
