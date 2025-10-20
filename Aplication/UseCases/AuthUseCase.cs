@@ -36,7 +36,7 @@ namespace Aplication.UseCases
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
         {
-            await ThrowIfEmailIsBlockAsync(loginDto.Email, ipAddress, deviceInfo);
+            await ThrowAndRegisterIfEmailIsBlockAsync(loginDto.Email, ipAddress, deviceInfo);
 
             try
             {
@@ -48,14 +48,14 @@ namespace Aplication.UseCases
             }
             catch (InvalidCredentialException ex)
             {
-                await HandleFailderAttemptAsync(loginDto.Email, ipAddress, deviceInfo);
+                await RegisterFailedLoginAndThrowAsync(loginDto.Email, ipAddress, deviceInfo);
                 throw;
             }
 
 
         }
 
-        private async Task ThrowIfEmailIsBlockAsync(string email, string ipAddress, string deviceInfo)
+        private async Task ThrowAndRegisterIfEmailIsBlockAsync(string email, string ipAddress, string deviceInfo)
         {
             bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
             if (emailIsBlocked)
@@ -78,17 +78,10 @@ namespace Aplication.UseCases
             };
             
         }
-        private async Task HandleFailderAttemptAsync(string email, string ipAddress, string deviceInfo)
+        private async Task RegisterFailedLoginAndThrowAsync(string email, string ipAddress, string deviceInfo)
         {
             _EmailAttemptsServiceI.IncrementAttempts(email);
             await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
-
-            bool nowIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
-            if (nowIsBlocked)
-            {
-                throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
-            }
-
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
 
