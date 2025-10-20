@@ -17,7 +17,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<UserRepositoryI, UserRepository > ();
 builder.Services.AddScoped<RefreshTokenRepositoryI, RefreshTokenRepository>();
-builder.Services.AddScoped<LoginAttemptRepositoryI, LoginAttemptRepository>();
+builder.Services.AddScoped<UserLoginHistoryRepositoryI, UserLoginHistoryRepository>();
 
 builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();

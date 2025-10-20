@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class LoginAttemptRepository : LoginAttemptRepositoryI
+    public class UserLoginHistoryRepository : UserLoginHistoryRepositoryI
     {
         private readonly DataContext _dataContext;
-        public LoginAttemptRepository(DataContext dataContext) {
+        public UserLoginHistoryRepository(DataContext dataContext) {
             _dataContext = dataContext;
         } 
         public async Task AddAsync(UserLoginHistory loginAttempt)
