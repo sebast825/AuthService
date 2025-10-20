@@ -23,7 +23,7 @@ builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();
 builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
 builder.Services.AddScoped<EmailAttemptsServiceI,EmailAttemptsService> ();
-builder.Services.AddScoped<LoginAttemptsServiceI, LoginAttemptsService>();
+builder.Services.AddScoped<UserLoginHistoryServiceI, UserLoginHistoryService>();
 
 builder.Services.AddScoped<AuthUseCase>();
 

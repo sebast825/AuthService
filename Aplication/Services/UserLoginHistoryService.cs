@@ -9,18 +9,19 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class LoginAttemptsService : LoginAttemptsServiceI
+    public class UserLoginHistoryService : UserLoginHistoryServiceI
     {
         private readonly UserLoginHistoryRepositoryI _loginAttemptRepositoryI;
-        public LoginAttemptsService(UserLoginHistoryRepositoryI loginAttemptRepositoryI) {
+        public UserLoginHistoryService(UserLoginHistoryRepositoryI loginAttemptRepositoryI) {
             _loginAttemptRepositoryI = loginAttemptRepositoryI;
         }
-        public async Task AddSuccessAttemptAsync(int userId, string ip)
+        public async Task AddSuccessAttemptAsync(int userId, string ip, string deviceInfo)
         {
             UserLoginHistory loginAttempt = new UserLoginHistory()
             {
                 UserId = userId,
                 IpAddress = ip,
+                DeviceInfo = deviceInfo
             };
             await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
         }

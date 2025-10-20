@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface LoginAttemptsServiceI
+    public interface UserLoginHistoryServiceI
     {
-        Task AddSuccessAttemptAsync(int userId, string ip);
+        Task AddSuccessAttemptAsync(int userId, string ip,string deviceInfo);
 
     }
 }

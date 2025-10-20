@@ -19,8 +19,8 @@ namespace Aplication.UseCases
         private readonly JwtServiceI _jwtServiceI;
         private readonly RefreshTokenServiceI _refreshTokenServiceI;
         private readonly EmailAttemptsServiceI _EmailAttemptsServiceI;
-        private readonly LoginAttemptsServiceI _loginAttemptsServiceI;
-        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI, EmailAttemptsServiceI EmailAttemptsServiceI, LoginAttemptsServiceI loginAttemptsServiceI)
+        private readonly UserLoginHistoryServiceI _loginAttemptsServiceI;
+        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI, EmailAttemptsServiceI EmailAttemptsServiceI, UserLoginHistoryServiceI loginAttemptsServiceI)
         {
             _userServicesI = userServicesI;
             _jwtServiceI = jwtServiceI;
@@ -44,7 +44,7 @@ namespace Aplication.UseCases
                 //await HandleAttemptLogin(loginDto.Email, userResponseDto.Id, "updateIp");
                 _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
                 
-                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, "ip");
+                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, "ip","deviceInfo");
 
 
                 string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
