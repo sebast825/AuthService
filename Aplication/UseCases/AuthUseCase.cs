@@ -39,7 +39,7 @@ namespace Aplication.UseCases
             bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
             if (emailIsBlocked)
             {
-                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, "IsBlocked", ipAddress, deviceInfo);
+                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
             }
@@ -67,7 +67,7 @@ namespace Aplication.UseCases
             }
             catch  (InvalidCredentialException ex){
                 _EmailAttemptsServiceI.IncrementAttempts(loginDto.Email);
-                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, "Invalid Credentials", ipAddress, deviceInfo);
+                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
 
                 //add register
                 bool nowBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
