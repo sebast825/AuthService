@@ -24,7 +24,9 @@ namespace Api.Controllers
         public async Task<AuthResponseDto> Login(LoginRequestDto loginDto)
         {
             //await _userServiceI.ValidateCredentialsAsync(loginDto);
-            return await _authUseCase.LoginAsync(loginDto);
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
+            return await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo);
            // return Ok();
         }
         [HttpGet("check")]

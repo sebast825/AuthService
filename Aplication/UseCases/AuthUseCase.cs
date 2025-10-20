@@ -29,7 +29,7 @@ namespace Aplication.UseCases
             _loginAttemptsServiceI = loginAttemptsServiceI;
         }
 
-        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto)
+        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
         {
 
             bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
@@ -44,7 +44,7 @@ namespace Aplication.UseCases
                 //await HandleAttemptLogin(loginDto.Email, userResponseDto.Id, "updateIp");
                 _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
                 
-                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, "ip","deviceInfo");
+                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress,deviceInfo);
 
 
                 string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
