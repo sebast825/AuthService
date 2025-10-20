@@ -20,13 +20,17 @@ namespace Aplication.UseCases
         private readonly RefreshTokenServiceI _refreshTokenServiceI;
         private readonly EmailAttemptsServiceI _EmailAttemptsServiceI;
         private readonly UserLoginHistoryServiceI _loginAttemptsServiceI;
-        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI, EmailAttemptsServiceI EmailAttemptsServiceI, UserLoginHistoryServiceI loginAttemptsServiceI)
+        private readonly SecurityLoginAttemptServiceI _securityLoginAttemptServiceI;
+        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI,
+            EmailAttemptsServiceI EmailAttemptsServiceI, UserLoginHistoryServiceI loginAttemptsServiceI,
+            SecurityLoginAttemptServiceI securityLoginAttemptServiceI)
         {
             _userServicesI = userServicesI;
             _jwtServiceI = jwtServiceI;
             _refreshTokenServiceI = refreshTokenServiceI;
             _EmailAttemptsServiceI = EmailAttemptsServiceI;
             _loginAttemptsServiceI = loginAttemptsServiceI;
+            _securityLoginAttemptServiceI = securityLoginAttemptServiceI;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
@@ -35,6 +39,7 @@ namespace Aplication.UseCases
             bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
             if (emailIsBlocked)
             {
+                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, "IsBlocked", ipAddress, deviceInfo);
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
             }
@@ -62,6 +67,8 @@ namespace Aplication.UseCases
             }
             catch  (InvalidCredentialException ex){
                 _EmailAttemptsServiceI.IncrementAttempts(loginDto.Email);
+                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, "Invalid Credentials", ipAddress, deviceInfo);
+
                 //add register
                 bool nowBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
                 if (nowBlocked)
