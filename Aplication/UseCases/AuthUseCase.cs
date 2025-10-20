@@ -69,9 +69,8 @@ namespace Aplication.UseCases
                 _EmailAttemptsServiceI.IncrementAttempts(loginDto.Email);
                 await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
 
-                //add register
-                bool nowBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
-                if (nowBlocked)
+                bool nowIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
+                if (nowIsBlocked)
                 {
                     throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
                 }
