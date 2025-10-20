@@ -7,6 +7,7 @@ using Core.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,32 +31,52 @@ namespace Aplication.UseCases
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto)
         {
-            UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
-            string jwtToken =_jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
-            RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
-            await _refreshTokenServiceI.AddAsync(refreshToken);
-            AuthResponseDto authResponseDto = new AuthResponseDto()
-            {
-                AccessToken = jwtToken,
-                RefreshToken = refreshToken.Token,
-                User = userResponseDto
-            };
-            return authResponseDto;
-        }
-        private async Task HandleAttemptLogin(string email,int userId, string ip)
-        {
-           bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
-            if (emailIsBlocked) {
-                await _loginAttemptsServiceI.AddAsync(userId, ip, true);
 
-            }
-            else
+            bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
+            if (emailIsBlocked)
             {
-                 await _loginAttemptsServiceI.AddAsync(userId, ip, false);
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
-            }
 
+            }
+            try
+            {
+                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
+                //await HandleAttemptLogin(loginDto.Email, userResponseDto.Id, "updateIp");
+                _EmailAttemptsServiceI.ResetAttempts(loginDto.Email);
+                
+                await _loginAttemptsServiceI.AddAsync(userResponseDto.Id, "ip", true);
+
+
+                string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
+                RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
+                await _refreshTokenServiceI.AddAsync(refreshToken);
+                AuthResponseDto authResponseDto = new AuthResponseDto()
+                {
+                    AccessToken = jwtToken,
+                    RefreshToken = refreshToken.Token,
+                    User = userResponseDto
+                };
+                return authResponseDto;
+
+
+            }
+            catch  (InvalidCredentialException ex){
+                _EmailAttemptsServiceI.IncrementAttempts(loginDto.Email);
+                //add register
+                bool nowBlocked = _EmailAttemptsServiceI.EmailIsBlocked(loginDto.Email);
+                if (nowBlocked)
+                {
+                    throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
+                }
+
+                throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
+            }
+            catch (Exception ex) {
+                throw;
+            }
+           
         }
+       
 
     }
 }
