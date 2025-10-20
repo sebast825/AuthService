@@ -17,7 +17,7 @@ namespace Core.Entities
 
         public string? FullName { get; set; }
 
-        public ICollection<LoginAttempt> LoginAttempts { get; set; } = new List<LoginAttempt>();
+        public ICollection<UserLoginHistory> LoginAttempts { get; set; } = new List<UserLoginHistory>();
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
 

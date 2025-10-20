@@ -15,9 +15,9 @@ namespace Infrastructure.Repositories
         public LoginAttemptRepository(DataContext dataContext) {
             _dataContext = dataContext;
         } 
-        public async Task AddAsync(LoginAttempt loginAttempt)
+        public async Task AddAsync(UserLoginHistory loginAttempt)
         {
-            await _dataContext.Set<LoginAttempt>().AddAsync(loginAttempt);
+            await _dataContext.Set<UserLoginHistory>().AddAsync(loginAttempt);
             await _dataContext.SaveChangesAsync();
         }
     }

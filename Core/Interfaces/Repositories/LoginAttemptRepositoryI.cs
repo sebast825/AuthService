@@ -9,6 +9,6 @@ namespace Core.Interfaces.Repositories
 {
     public interface LoginAttemptRepositoryI
     {
-        Task AddAsync(LoginAttempt loginAttempt);
+        Task AddAsync(UserLoginHistory loginAttempt);
     }
 }

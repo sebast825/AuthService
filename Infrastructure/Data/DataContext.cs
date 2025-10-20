@@ -13,7 +13,7 @@ namespace Infrastructure.Data
         public DataContext(DbContextOptions<DataContext> options) :base(options) { }
 
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<LoginAttempt> LoginAttempts { get; set; } = null!;
+        public DbSet<UserLoginHistory> UserLoginHistory { get; set; } = null!;
         public DbSet<RefreshToken>RefreshTokens { get; set; } = null!;
     }
 }
