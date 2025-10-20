@@ -15,5 +15,6 @@ namespace Infrastructure.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<UserLoginHistory> UserLoginHistory { get; set; } = null!;
         public DbSet<RefreshToken>RefreshTokens { get; set; } = null!;
+        public DbSet<SecurityLoginAttempt> SecurityLoginAttempts { get; set; } = null!;
     }
 }

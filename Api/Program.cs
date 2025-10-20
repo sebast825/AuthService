@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<UserRepositoryI, UserRepository > ();
 builder.Services.AddScoped<RefreshTokenRepositoryI, RefreshTokenRepository>();
 builder.Services.AddScoped<UserLoginHistoryRepositoryI, UserLoginHistoryRepository>();
+builder.Services.AddScoped<SecurityLoginAttemptRepositoryI,SecurityLoginAttemptRepository>();
 
 builder.Services.AddScoped<UserServicesI, UserService>();
 builder.Services.AddScoped<JwtServiceI,JwtService> ();
