@@ -25,6 +25,7 @@ builder.Services.AddScoped<JwtServiceI,JwtService> ();
 builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
 builder.Services.AddScoped<EmailAttemptsServiceI,EmailAttemptsService> ();
 builder.Services.AddScoped<UserLoginHistoryServiceI, UserLoginHistoryService>();
+builder.Services.AddScoped<SecurityLoginAttemptServiceI, SecurityLoginAttemptService>();
 
 builder.Services.AddScoped<AuthUseCase>();
 
@@ -36,7 +37,7 @@ builder.Services.AddSwaggerGen();
 
 //--------------------------EXTENSIONS----------------------------------------
 builder.Services.AddIpRateLimit(builder.Configuration);
-//-----------------------------JWT--------------------------------------------
+//------------JWT------------
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
 
