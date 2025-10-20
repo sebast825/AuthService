@@ -57,6 +57,19 @@ AuthServiceSolution/
        • Expiration
        • Datos mínimos del usuario (opcional)
 
+### UserLoginHistory
+- Guarda logins exitosos de usuarios registrados
+- Para analytics, historial de actividad, reporting
+
+### SecurityLoginAttempt 
+- Guarda intentos fallidos y bloqueos
+- Para detección de ataques, forensics, monitoreo
+
+
+### EmailAttemptsService
+- Prevención en Tiempo Real
+- Maneja bloqueo temporal después de intentos fallidos
+
 ## Proximas Mejoras
 
 - Persistir los intentos fallidos de login en la base de datos usando un sistema de colas, para evitar saturar el pool de conexiones durante ataques de fuerza bruta.
