@@ -1,4 +1,14 @@
-﻿using System;
+﻿using Aplication.UseCases;
+using Core.Dto.Auth;
+using Core.Dto.User;
+using Core.Entities;
+using Core.Interfaces;
+using Core.Interfaces.Services;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +16,76 @@ using System.Threading.Tasks;
 
 namespace Tests.UseCases
 {
-    public class AuthLoginTest
+
+
+
+    [TestClass]
+    public class AuthLoginTests
     {
+        private Mock<IUserServices> _mockUserServices;
+        private Mock<IJwtService> _mockJwtService;
+        private Mock<IRefreshTokenService> _mockRefreshTokenService;
+        private Mock<IEmailAttemptsService> _mockEmailAttemptsService;
+        private Mock<IUserLoginHistoryService> _mockLoginAttemptsService;
+        private Mock<ISecurityLoginAttemptService> _mockSecurityLoginAttemptService;
+        private Mock<IDbContextTransaction> _mockTransaction;
+        private Mock<IUnitOfWork> _mockUnitOfWork;
+        private AuthUseCase _authUseCase;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            _mockUserServices = new Mock<IUserServices>();
+            _mockJwtService = new Mock<IJwtService>();
+            _mockRefreshTokenService = new Mock<IRefreshTokenService>();
+            _mockEmailAttemptsService = new Mock<IEmailAttemptsService>();
+            _mockLoginAttemptsService = new Mock<IUserLoginHistoryService>();
+            _mockSecurityLoginAttemptService = new Mock<ISecurityLoginAttemptService>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+
+
+
+            _authUseCase = new AuthUseCase(
+                _mockUserServices.Object,
+                _mockJwtService.Object,
+                _mockRefreshTokenService.Object,
+                _mockEmailAttemptsService.Object,
+                _mockLoginAttemptsService.Object,
+                _mockSecurityLoginAttemptService.Object,
+                _mockUnitOfWork.Object
+            );
+        }
+
+
+        [TestMethod]
+        public async Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
+        {
+            var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
+            var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
+
+            _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(false);
+            _mockUserServices.Setup(s => s.ValidateCredentialsAsync(loginDto))
+                .ReturnsAsync(userResponse);
+            _mockJwtService.Setup(s => s.GenerateAccessToken(userResponse.Id.ToString()))
+                .Returns("jwt_token");
+            _mockRefreshTokenService.Setup(s => s.CreateRefreshToken(userResponse.Id))
+                .Returns(new RefreshToken { Token = "refresh_token" });
+
+            var result = await _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device");
+
+            Assert.AreEqual("jwt_token", result.AccessToken);
+            Assert.AreEqual("refresh_token", result.RefreshToken);
+            Assert.AreEqual(userResponse, result.User);
+
+            _mockEmailAttemptsService.Verify(s => s.ResetAttempts(loginDto.Email), Times.Once);
+            _mockLoginAttemptsService.Verify(s => s.AddSuccessAttemptAsync(userResponse.Id, "127.0.0.1", "device"), Times.Once);
+            _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
+            _mockUnitOfWork.Verify(u => u.CommitAsync(), Times.Once);
+
+        }
+
+
+
 
     }
 }
