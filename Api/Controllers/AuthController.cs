@@ -39,7 +39,7 @@ namespace Api.Controllers
         [HttpPost("access-token")]
         public async Task<string> RefreshToken([FromBody] string refrehToken)
         {
-            return await _authUseCase.GetNewAccessTokenAsync(refrehToken);
+            return await _authUseCase.GenerateNewAccessTokenAsync(refrehToken);
 
         }
         /* [HttpPost("logout")]

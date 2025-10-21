@@ -59,7 +59,7 @@ namespace Aplication.UseCases
 
 
         }
-        public async Task<string> GetNewAccessTokenAsync(string refreshToken)
+        public async Task<string> GenerateNewAccessTokenAsync(string refreshToken)
         {
 
             RefreshToken refreshTokenResponse = await _refreshTokenService.GetValidRefreshTokenAsync(refreshToken);
