@@ -26,36 +26,31 @@ AuthServiceSolution/
 └─ Tests/    
 ```
   
-## Caso de uso: LoginUser
+## Caso de uso: Login
 
-1. Traer usuario desde UserRepository por email
-   - Si el usuario no existe → lanzar AuthenticationException (usuario inválido)
+**1. Recepción de credenciales:**  
+- Se reciben email y password, junto con IP y datos del dispositivo.
 
-2. Verificar si puede intentar login
-   - LoginAttemptService.CanAttemptLogin(user.LoginAttempts)
-   - Si no puede (bloqueado, demasiados intentos fallidos, etc.) → lanzar TooManyAttemptsException
+**2. Validación de bloqueos:**  
+- Se verifica si el email está bloqueado por intentos fallidos anteriores.  
+- Si está bloqueado, se registra el intento y se rechaza el login.
 
-3. Validar credenciales
-   - AuthService.ValidateCredentials(user, password)
-   - Si es incorrecto:
-       • Registrar intento fallido → LoginAttemptService.RecordAttempt(user.Id, success = false)
-       • Lanzar AuthenticationException (credenciales inválidas)
+**3. Validación de credenciales:**  
+- Si las credenciales son inválidas, se registra el fallo y se notifica al usuario.  
+- Si son válidas, se continúa con el login.
 
-4. Registrar intento exitoso
-   - LoginAttemptService.RecordAttempt(user.Id, success = true)
+**4. Manejo de login exitoso:**  
+- Se resetean los intentos de email.  
+- Se registra el intento exitoso en el historial de login.  
+- Se generan JWT y Refresh Token.  
+- Se persiste el Refresh Token en la base de datos dentro de una transacción.
 
-5. Generar token
-   - TokenService.GenerateAccessToken(user)
-   - TokenService.GenerateRefreshToken(user)
+**5. Respuesta:**  
+- Se retorna un objeto con `AccessToken`, `RefreshToken` y datos del usuario.
 
-6. Actualizar o guardar refresh token en DB si aplica
 
-7. Devolver respuesta
-   - Crear y retornar LoginResponseDto con:
-       • AccessToken
-       • RefreshToken
-       • Expiration
-       • Datos mínimos del usuario (opcional)
+
+-------------------------
 
 ### UserLoginHistory
 - Guarda logins exitosos de usuarios registrados
