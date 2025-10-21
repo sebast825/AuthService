@@ -30,5 +30,9 @@ namespace Aplication.Services
 
             await _securityLoginAttemptRepository.AddAsync(securityLoginAttempt);
         }
+        public async Task<List<SecurityLoginAttempt>> GetAllAsync()
+        {
+            return await _securityLoginAttemptRepository.GetAllAsync();
+        }
     }
 }
