@@ -58,14 +58,17 @@ namespace Aplication.Services
             refreshToken.Revoked = true;
             await _refreshTokenRepository.UpdateAsync(refreshToken);
         }
-        public async Task<int> GetUserIdByRefreshToken(string refreshToken)
+        public async Task<RefreshToken> GetValidRefreshTokenAsync(string refreshToken)
         {
             RefreshToken? refreshTokenEntity = await _refreshTokenRepository.GetAsync(t => t.Token == refreshToken);
             if (refreshTokenEntity == null)
             {
                 throw new InvalidCredentialException(ErrorMessages.InvalidToken);
+            }else if (!refreshTokenEntity.IsActive())
+            {
+                throw new InvalidCredentialException();
             }
-            return refreshTokenEntity.UserId;
+                return refreshTokenEntity;
         }
         private string GenerateRefreshToken()
         {
