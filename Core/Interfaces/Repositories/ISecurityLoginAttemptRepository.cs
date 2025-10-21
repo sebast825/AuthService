@@ -10,5 +10,6 @@ namespace Core.Interfaces.Repositories
     public interface ISecurityLoginAttemptRepository
     {
         Task AddAsync(SecurityLoginAttempt securityLoginAttempt);
+        Task<List<SecurityLoginAttempt>> GetAllAsync();
     }
 }

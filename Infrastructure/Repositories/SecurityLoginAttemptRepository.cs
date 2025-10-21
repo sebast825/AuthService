@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Repositories;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,12 @@ namespace Infrastructure.Repositories
         {
             await _dataContext.Set<SecurityLoginAttempt>().AddAsync(securityLoginAttempt);
             await _dataContext.SaveChangesAsync();
+        }
+
+        public async Task<List<SecurityLoginAttempt>> GetAllAsync()
+        {
+           return await _dataContext.Set<SecurityLoginAttempt>().ToListAsync();
+
         }
     }
 }
