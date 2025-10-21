@@ -93,6 +93,7 @@ namespace Aplication.UseCases
         private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
         {
             string jwtToken = _jwtService.GenerateAccessToken(userResponseDto.Id.ToString());
+            await _refreshTokenService.RevokeRefreshToken(userResponseDto.Id);
             RefreshToken refreshToken = _refreshTokenService.CreateRefreshToken(userResponseDto.Id);
             await _refreshTokenService.AddAsync(refreshToken);
 
