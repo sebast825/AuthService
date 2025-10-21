@@ -19,13 +19,13 @@ namespace Tests.Services
     public class RefreshTokenServiceTest
     {
         private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
-        private  IRefreshTokenService _refreshTokenServiceI;
+        private  IRefreshTokenService _refreshTokenService;
 
         [TestInitialize]
         public void Setup()
         {
             _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-            _refreshTokenServiceI = new RefreshTokenService(_mockRefreshTokenRepo.Object);
+            _refreshTokenService = new RefreshTokenService(_mockRefreshTokenRepo.Object);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace Tests.Services
         {
 
             int userId = 123;
-            RefreshToken token = _refreshTokenServiceI.CreateRefreshToken(userId);
+            RefreshToken token = _refreshTokenService.CreateRefreshToken(userId);
 
             Assert.IsNotNull(token);
             Assert.AreEqual(token.UserId, userId);
@@ -57,7 +57,7 @@ namespace Tests.Services
                 .Returns(Task.CompletedTask);
 
 
-            await _refreshTokenServiceI.RevokeRefreshToken(refreshToken.Token);
+            await _refreshTokenService.RevokeRefreshToken(refreshToken.Token);
 
             Assert.IsTrue(refreshToken.Revoked);
             
@@ -72,7 +72,7 @@ namespace Tests.Services
                  .ReturnsAsync((RefreshToken?)null);
   
     
-            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenServiceI.RevokeRefreshToken(token));
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshToken(token));
             Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
 
         }
