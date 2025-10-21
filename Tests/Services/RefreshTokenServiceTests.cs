@@ -43,7 +43,7 @@ namespace Tests.Services
         }
 
         [TestMethod]
-        public async Task RevokeRefreshToken_ValidToken_SetsRevokedTrue()
+        public async Task RevokeRefreshToken_WhenValidToken_ShouldSetsRevokedTrue()
         {
             string token = "abc";
             int userId = 1;
@@ -63,7 +63,7 @@ namespace Tests.Services
             
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_InvalidToken_Throw()
+        public async Task RevokeRefreshToken_WhenInvalidTokenShouldThrow()
         {
             string token = "abc";
 
@@ -77,7 +77,7 @@ namespace Tests.Services
 
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_ValidUser_SetsRevokedTrue()
+        public async Task RevokeRefreshToken_WhenValidUser_SholuldSetsRevokedTrue()
         {
             string token = "abc";
             int userId = 1;
@@ -97,7 +97,7 @@ namespace Tests.Services
 
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_InvalidUser_Throw()
+        public async Task RevokeRefreshToken_WhenInvalidUser_ShouldThrow()
         {
             string token = "abc";
             int userId = 1;
