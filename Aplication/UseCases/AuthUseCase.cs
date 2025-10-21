@@ -18,24 +18,24 @@ namespace Aplication.UseCases
 {
     public class AuthUseCase
     {
-        private readonly IUserServices _userServicesI;
-        private readonly IJwtService _jwtServiceI;
-        private readonly IRefreshTokenService _refreshTokenServiceI;
-        private readonly IEmailAttemptsService _EmailAttemptsServiceI;
-        private readonly IUserLoginHistoryService _loginAttemptsServiceI;
-        private readonly ISecurityLoginAttemptService _securityLoginAttemptServiceI;
+        private readonly IUserServices _userServices;
+        private readonly IJwtService _jwtService;
+        private readonly IRefreshTokenService _refreshTokenService;
+        private readonly IEmailAttemptsService _EmailAttemptsService;
+        private readonly IUserLoginHistoryService _loginAttemptsService;
+        private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
         private readonly DataContext _dataContext;
-        public AuthUseCase(IUserServices userServicesI, IJwtService jwtServiceI, IRefreshTokenService refreshTokenServiceI,
-            IEmailAttemptsService EmailAttemptsServiceI, IUserLoginHistoryService loginAttemptsServiceI,
-            ISecurityLoginAttemptService securityLoginAttemptServiceI,
+        public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
+            IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
+            ISecurityLoginAttemptService securityLoginAttemptService,
             DataContext dataContext)
         {
-            _userServicesI = userServicesI;
-            _jwtServiceI = jwtServiceI;
-            _refreshTokenServiceI = refreshTokenServiceI;
-            _EmailAttemptsServiceI = EmailAttemptsServiceI;
-            _loginAttemptsServiceI = loginAttemptsServiceI;
-            _securityLoginAttemptServiceI = securityLoginAttemptServiceI;
+            _userServices = userServices;
+            _jwtService = jwtService;
+            _refreshTokenService = refreshTokenService;
+            _EmailAttemptsService = EmailAttemptsService;
+            _loginAttemptsService = loginAttemptsService;
+            _securityLoginAttemptService = securityLoginAttemptService;
             _dataContext = dataContext;
         }
 
@@ -45,7 +45,7 @@ namespace Aplication.UseCases
 
             try
             {
-                UserResponseDto userResponseDto = await _userServicesI.ValidateCredentialsAsync(loginDto);
+                UserResponseDto userResponseDto = await _userServices.ValidateCredentialsAsync(loginDto);
 
                 return await HandleSuccessfulLoginAsync(userResponseDto, loginDto.Email, ipAddress, deviceInfo);
             }
@@ -60,10 +60,10 @@ namespace Aplication.UseCases
 
         private async Task ThrowAndRegisterIfEmailIsBlockAsync(string email, string ipAddress, string deviceInfo)
         {
-            bool emailIsBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
+            bool emailIsBlocked = _EmailAttemptsService.EmailIsBlocked(email);
             if (emailIsBlocked)
             {
-                await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+                await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
             }
@@ -73,11 +73,11 @@ namespace Aplication.UseCases
          * Call fn to generate tokens */
         private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
         {
-            _EmailAttemptsServiceI.ResetAttempts(email);
+            _EmailAttemptsService.ResetAttempts(email);
             var transaction = await _dataContext.Database.BeginTransactionAsync();
             try
             {
-                await _loginAttemptsServiceI.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
+                await _loginAttemptsService.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
                 AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
                 await transaction.CommitAsync();
                 return authResponseDto;
@@ -91,9 +91,9 @@ namespace Aplication.UseCases
 
         private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
         {
-            string jwtToken = _jwtServiceI.GenerateAccessToken(userResponseDto.Id.ToString());
-            RefreshToken refreshToken = _refreshTokenServiceI.CreateRefreshToken(userResponseDto.Id);
-            await _refreshTokenServiceI.AddAsync(refreshToken);
+            string jwtToken = _jwtService.GenerateAccessToken(userResponseDto.Id.ToString());
+            RefreshToken refreshToken = _refreshTokenService.CreateRefreshToken(userResponseDto.Id);
+            await _refreshTokenService.AddAsync(refreshToken);
 
             return new AuthResponseDto()
             {
@@ -105,8 +105,8 @@ namespace Aplication.UseCases
 
         private async Task RegisterFailedLoginAndThrowAsync(string email, string ipAddress, string deviceInfo)
         {
-            _EmailAttemptsServiceI.IncrementAttempts(email);
-            await _securityLoginAttemptServiceI.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
+            _EmailAttemptsService.IncrementAttempts(email);
+            await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
 
