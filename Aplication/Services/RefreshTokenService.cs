@@ -58,7 +58,15 @@ namespace Aplication.Services
             refreshToken.Revoked = true;
             await _refreshTokenRepository.UpdateAsync(refreshToken);
         }
-
+        public async Task<int> GetUserIdByRefreshToken(string refreshToken)
+        {
+            RefreshToken? refreshTokenEntity = await _refreshTokenRepository.GetAsync(t => t.Token == refreshToken);
+            if (refreshTokenEntity == null)
+            {
+                throw new InvalidCredentialException(ErrorMessages.InvalidToken);
+            }
+            return refreshTokenEntity.UserId;
+        }
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
@@ -71,6 +79,6 @@ namespace Aplication.Services
             return DateTime.UtcNow.AddDays(1);
         }
 
-      
+   
     }
 }
