@@ -26,5 +26,9 @@ namespace Aplication.Services
             await _loginAttemptRepository.AddAsync(loginAttempt);            
         }
 
+        public async Task<List<UserLoginHistory>> GetAllByUserIdAsync(int userId)
+        {
+            return await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
+        }
     }
 }

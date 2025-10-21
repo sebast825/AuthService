@@ -10,6 +10,7 @@ namespace Core.Interfaces.Services
     public interface IUserLoginHistoryService
     {
         Task AddSuccessAttemptAsync(int userId, string ip,string deviceInfo);
+        Task<List<UserLoginHistory>> GetAllByUserIdAsync(int userId);
 
     }
 }
