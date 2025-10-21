@@ -11,11 +11,11 @@ namespace Aplication.Services
 {
     public class SecurityLoginAttemptService : ISecurityLoginAttemptService
     {
-        private readonly ISecurityLoginAttemptRepository _securityLoginAttemptRepositoryI;
+        private readonly ISecurityLoginAttemptRepository _securityLoginAttemptRepository;
 
-        public SecurityLoginAttemptService(ISecurityLoginAttemptRepository securityLoginAttemptRepositoryI)
+        public SecurityLoginAttemptService(ISecurityLoginAttemptRepository securityLoginAttemptRepository)
         {
-            _securityLoginAttemptRepositoryI = securityLoginAttemptRepositoryI;
+            _securityLoginAttemptRepository = securityLoginAttemptRepository;
         }
         public async Task AddFailedLoginAttemptAsync(string email,string failureReason, string ipAddrress, string deviceInfo)
         {
@@ -28,7 +28,7 @@ namespace Aplication.Services
 
             };
 
-            await _securityLoginAttemptRepositoryI.AddAsync(securityLoginAttempt);
+            await _securityLoginAttemptRepository.AddAsync(securityLoginAttempt);
         }
     }
 }

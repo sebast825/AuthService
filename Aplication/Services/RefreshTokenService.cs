@@ -16,10 +16,10 @@ namespace Aplication.Services
     public class RefreshTokenService : IRefreshTokenService
     {
 
-        private readonly IRefreshTokenRepository _refreshTokenRepositoryI;
-        public RefreshTokenService(IRefreshTokenRepository refreshTokenRepositoryI)
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        public RefreshTokenService(IRefreshTokenRepository refreshTokenRepository)
         {
-            _refreshTokenRepositoryI = refreshTokenRepositoryI;
+            _refreshTokenRepository = refreshTokenRepository;
         }
         public RefreshToken CreateRefreshToken(int userId)
         {
@@ -36,17 +36,17 @@ namespace Aplication.Services
         }
         public async Task AddAsync(RefreshToken token)
         {
-            await _refreshTokenRepositoryI.AddAsync(token);
+            await _refreshTokenRepository.AddAsync(token);
         }
 
         public async Task RevokeRefreshToken(string token)
         {
-            RefreshToken? refreshToken = await _refreshTokenRepositoryI.GetAsync(t => t.Token == token);
+            RefreshToken? refreshToken = await _refreshTokenRepository.GetAsync(t => t.Token == token);
             if (refreshToken == null) {
                 throw new InvalidCredentialException(ErrorMessages.InvalidToken);
             }
             refreshToken.Revoked = true;
-            await _refreshTokenRepositoryI.UpdateAsync(refreshToken);
+            await _refreshTokenRepository.UpdateAsync(refreshToken);
         }
 
         private string GenerateRefreshToken()

@@ -11,9 +11,9 @@ namespace Aplication.Services
 {
     public class UserLoginHistoryService : IUserLoginHistoryService
     {
-        private readonly IUserLoginHistoryRepository _loginAttemptRepositoryI;
-        public UserLoginHistoryService(IUserLoginHistoryRepository loginAttemptRepositoryI) {
-            _loginAttemptRepositoryI = loginAttemptRepositoryI;
+        private readonly IUserLoginHistoryRepository _loginAttemptRepository;
+        public UserLoginHistoryService(IUserLoginHistoryRepository loginAttemptRepository) {
+            _loginAttemptRepository = loginAttemptRepository;
         }
         public async Task AddSuccessAttemptAsync(int userId, string ip, string deviceInfo)
         {
@@ -23,7 +23,7 @@ namespace Aplication.Services
                 IpAddress = ip,
                 DeviceInfo = deviceInfo
             };
-            await _loginAttemptRepositoryI.AddAsync(loginAttempt);            
+            await _loginAttemptRepository.AddAsync(loginAttempt);            
         }
 
     }

@@ -15,11 +15,11 @@ namespace Aplication.Services
 {
     public class UserService : IUserServices
     {
-        private readonly IUserRepository _userRepositoryI;
-        public UserService(IUserRepository userRepositoryI)
+        private readonly IUserRepository _userRepository;
+        public UserService(IUserRepository userRepository)
         {
 
-            _userRepositoryI = userRepositoryI;
+            _userRepository = userRepository;
         }
 
         public async Task AddAsync(UserCreateRequestDto userCreateDto)
@@ -34,12 +34,12 @@ namespace Aplication.Services
                 throw new InvalidOperationException(ErrorMessages.EmailNotAviable);
             }
 
-            await _userRepositoryI.AddAsync(user);
+            await _userRepository.AddAsync(user);
         }
 
         public async Task<UserResponseDto> ValidateCredentialsAsync(LoginRequestDto loginDto)
         {
-            User? user = await _userRepositoryI.GetByEmailAsync(loginDto.Email);
+            User? user = await _userRepository.GetByEmailAsync(loginDto.Email);
             if (user == null)
             {
                 throw new InvalidCredentialException(ErrorMessages.InvalidCredentials);
@@ -59,7 +59,7 @@ namespace Aplication.Services
         }
         private async Task<bool> EmailAlreadyUsed(string email)
         {
-            return await _userRepositoryI.GetByEmailAsync(email) != null;
+            return await _userRepository.GetByEmailAsync(email) != null;
 
         }
 
