@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Tests.Entities
 {
     [TestClass]
-    public class UserTest
+    public class UserTests
     {
 
 

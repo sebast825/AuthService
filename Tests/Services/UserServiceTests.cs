@@ -11,7 +11,7 @@ using System.Security.Authentication;
 namespace Tests.Services
 {
     [TestClass]
-    public class UserServiceTest
+    public class UserServiceTests
     {
 
         private Mock<IUserRepository> _mockUserRepo;

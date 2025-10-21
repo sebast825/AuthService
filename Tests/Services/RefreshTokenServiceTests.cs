@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace Tests.Services
 {
     [TestClass]
-    public class RefreshTokenServiceTest
+    public class RefreshTokenServiceTests
     {
         private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
         private  IRefreshTokenService _refreshTokenService;

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Tests.Services
 {
     [TestClass]
-    public class EmailAttemptsServiceTest
+    public class EmailAttemptsServiceTests
     {
         private IEmailAttemptsService _EmailAttemptsServiceI;
         private  IMemoryCache _cache;
