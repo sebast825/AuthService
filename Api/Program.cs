@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Api.Extensions;
 using Infrastructure.Repositories;
+using Core.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
@@ -27,6 +28,7 @@ builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<AuthUseCase>();
 
 builder.Services.AddHttpContextAccessor();
