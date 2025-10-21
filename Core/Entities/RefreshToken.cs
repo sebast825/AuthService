@@ -16,6 +16,10 @@ namespace Core.Entities
 
         public User User { get; set; } = null!;
 
+        public bool IsActive()
+        {
+            return !Revoked && ExpiresAt > DateTime.UtcNow;
+        }
 
     }
 }
