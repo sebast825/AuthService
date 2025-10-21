@@ -36,14 +36,17 @@ namespace Api.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return Ok(new { messagge = "Token Valido", userId });
         }
+        [HttpPost("access-token")]
+        public async Task<string> RefreshToken([FromBody] string refrehToken)
+        {
+            return await _authUseCase.GetNewAccessTokenAsync(refrehToken);
 
+        }
         /* [HttpPost("logout")]
          public async Task<IActionResult> Logout()
 
 
-         [HttpPost("refresh-token")]
-             public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
-
+        
 
          [HttpPost("forgot-password")]
              public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)

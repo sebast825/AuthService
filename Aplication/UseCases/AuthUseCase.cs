@@ -7,6 +7,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,15 @@ namespace Aplication.UseCases
                 throw;
             }
 
+
+        }
+        public async Task<string> GetNewAccessTokenAsync(string refreshToken)
+        {
+
+            RefreshToken refreshTokenResponse = await _refreshTokenService.GetValidRefreshTokenAsync(refreshToken);
+
+            string accessToken = _jwtService.GenerateAccessToken(refreshTokenResponse.Token);
+            return accessToken;
 
         }
 
