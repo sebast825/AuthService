@@ -89,6 +89,8 @@ namespace Tests.UseCases
             _mockEmailAttemptsService.Verify(s => s.ResetAttempts(loginDto.Email), Times.Once);
             _mockLoginAttemptsService.Verify(s => s.AddSuccessAttemptAsync(userResponse.Id, "127.0.0.1", "device"), Times.Once);
             _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
+            _mockRefreshTokenService.Verify(s => s.RevokeRefreshToken(1), Times.Once);
+
             _mockUnitOfWork.Verify(u => u.CommitAsync(), Times.Once);
 
         }
