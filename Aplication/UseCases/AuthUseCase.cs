@@ -64,7 +64,7 @@ namespace Aplication.UseCases
 
             RefreshToken refreshTokenResponse = await _refreshTokenService.GetValidRefreshTokenAsync(refreshToken);
 
-            string accessToken = _jwtService.GenerateAccessToken(refreshTokenResponse.Token);
+            string accessToken = _jwtService.GenerateAccessToken(refreshTokenResponse.UserId.ToString());
             return accessToken;
 
         }
