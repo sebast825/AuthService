@@ -14,14 +14,14 @@ namespace Tests.Services
     [TestClass]
     public class EmailAttemptsServiceTests
     {
-        private IEmailAttemptsService _EmailAttemptsServiceI;
+        private IEmailAttemptsService _emailAttemptsService;
         private  IMemoryCache _cache;
 
         [TestInitialize]
         public void SetUp()
         {
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _EmailAttemptsServiceI = new EmailAttemptsService(_cache);
+            _emailAttemptsService = new EmailAttemptsService(_cache);
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@ namespace Tests.Services
             string email = "test@gmail.com";
             _cache.Set(email, 5);
   
-           bool isBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
+           bool isBlocked = _emailAttemptsService.EmailIsBlocked(email);
             Assert.IsTrue(isBlocked);
         }
         [TestMethod]
@@ -39,7 +39,7 @@ namespace Tests.Services
             string email = "test@gmail.com";
             _cache.Set(email, 4);
 
-            bool isBlocked = _EmailAttemptsServiceI.EmailIsBlocked(email);
+            bool isBlocked = _emailAttemptsService.EmailIsBlocked(email);
             Assert.IsFalse(isBlocked);
         }
 
@@ -49,7 +49,7 @@ namespace Tests.Services
             string email = "test@gmail.com";
             int attempts = 4;
             _cache.Set(email, attempts);
-            _EmailAttemptsServiceI.ResetAttempts(email);
+            _emailAttemptsService.ResetAttempts(email);
 
             Assert.AreEqual(_cache.Get(email), null);
         }
@@ -59,7 +59,7 @@ namespace Tests.Services
             string email = "test@gmail.com";
             int attempts = 4;
             _cache.Set(email, attempts);
-            _EmailAttemptsServiceI.IncrementAttempts(email);
+            _emailAttemptsService.IncrementAttempts(email);
 
             Assert.AreEqual(_cache.Get(email), attempts+1);
         }
@@ -68,7 +68,7 @@ namespace Tests.Services
         {
             string email = "test@gmail.com";
             int attempts = 1;
-            _EmailAttemptsServiceI.IncrementAttempts(email);
+            _emailAttemptsService.IncrementAttempts(email);
 
             Assert.AreEqual(_cache.Get(email), attempts);
         }
