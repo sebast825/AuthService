@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,6 +93,26 @@ namespace Tests.UseCases
 
         }
         [TestMethod]
+        public async Task LoginAsync_ShouldThrow_WhenCredentialsAreValid()
+        {
+            // Arrange
+            var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
+            var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
+
+            _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(false);
+            _mockUserServices.Setup(s => s.ValidateCredentialsAsync(loginDto))
+                .ThrowsAsync(new InvalidCredentialException(ErrorMessages.InvalidCredentials));
+
+            // Act
+            var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device"));
+
+            // Assert
+            Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
+            _mockEmailAttemptsService.Verify(s => s.IncrementAttempts(loginDto.Email), Times.Once);
+            _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.InvalidCredentials, "127.0.0.1", "device"), Times.Once);
+
+        }
+        [TestMethod]
         public async Task LoginAsync_ShouldThrow_WhenEmailIsBlocked()
         {
             // Arrange
@@ -107,6 +128,7 @@ namespace Tests.UseCases
             Assert.AreEqual(ErrorMessages.MaxLoginAttemptsExceeded, ex.Message);
 
         }
+
 
 
 
