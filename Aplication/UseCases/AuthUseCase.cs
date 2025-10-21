@@ -4,6 +4,7 @@ using Core.Constants;
 using Core.Dto.Auth;
 using Core.Dto.User;
 using Core.Entities;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using System;
@@ -24,11 +25,11 @@ namespace Aplication.UseCases
         private readonly IEmailAttemptsService _EmailAttemptsService;
         private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
             ISecurityLoginAttemptService securityLoginAttemptService,
-            DataContext dataContext)
+            IUnitOfWork unitOfWork)
         {
             _userServices = userServices;
             _jwtService = jwtService;
@@ -36,7 +37,7 @@ namespace Aplication.UseCases
             _EmailAttemptsService = EmailAttemptsService;
             _loginAttemptsService = loginAttemptsService;
             _securityLoginAttemptService = securityLoginAttemptService;
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
@@ -74,17 +75,17 @@ namespace Aplication.UseCases
         private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
         {
             _EmailAttemptsService.ResetAttempts(email);
-            var transaction = await _dataContext.Database.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
             try
             {
                 await _loginAttemptsService.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
                 AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
-                await transaction.CommitAsync();
+                await _unitOfWork.CommitAsync();
                 return authResponseDto;
             }
             catch
             {
-                await transaction.RollbackAsync();
+                await _unitOfWork.RollbackAsync();
                 throw;
             }
         }
