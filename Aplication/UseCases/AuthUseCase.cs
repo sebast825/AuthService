@@ -18,16 +18,16 @@ namespace Aplication.UseCases
 {
     public class AuthUseCase
     {
-        private readonly UserServicesI _userServicesI;
-        private readonly JwtServiceI _jwtServiceI;
-        private readonly RefreshTokenServiceI _refreshTokenServiceI;
-        private readonly EmailAttemptsServiceI _EmailAttemptsServiceI;
-        private readonly UserLoginHistoryServiceI _loginAttemptsServiceI;
-        private readonly SecurityLoginAttemptServiceI _securityLoginAttemptServiceI;
+        private readonly IUserServices _userServicesI;
+        private readonly IJwtService _jwtServiceI;
+        private readonly IRefreshTokenService _refreshTokenServiceI;
+        private readonly IEmailAttemptsService _EmailAttemptsServiceI;
+        private readonly IUserLoginHistoryService _loginAttemptsServiceI;
+        private readonly ISecurityLoginAttemptService _securityLoginAttemptServiceI;
         private readonly DataContext _dataContext;
-        public AuthUseCase(UserServicesI userServicesI, JwtServiceI jwtServiceI, RefreshTokenServiceI refreshTokenServiceI,
-            EmailAttemptsServiceI EmailAttemptsServiceI, UserLoginHistoryServiceI loginAttemptsServiceI,
-            SecurityLoginAttemptServiceI securityLoginAttemptServiceI,
+        public AuthUseCase(IUserServices userServicesI, IJwtService jwtServiceI, IRefreshTokenService refreshTokenServiceI,
+            IEmailAttemptsService EmailAttemptsServiceI, IUserLoginHistoryService loginAttemptsServiceI,
+            ISecurityLoginAttemptService securityLoginAttemptServiceI,
             DataContext dataContext)
         {
             _userServicesI = userServicesI;

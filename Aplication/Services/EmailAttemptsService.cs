@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class EmailAttemptsService : EmailAttemptsServiceI
+    public class EmailAttemptsService : IEmailAttemptsService
     {
         private readonly IMemoryCache _cache;
         //range time until the cache restart

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Repositories
 {
-    public interface UserLoginHistoryRepositoryI
+    public interface IUserRepository
     {
-        Task AddAsync(UserLoginHistory loginAttempt);
+        Task AddAsync(User user);
+        Task<User?> GetByEmailAsync(string email);
+
     }
 }

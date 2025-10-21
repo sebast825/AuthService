@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface SecurityLoginAttemptServiceI
+    public interface IJwtService
     {
-        Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo);
+        public string GenerateAccessToken(string id);
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class UserLoginHistoryRepository : UserLoginHistoryRepositoryI
+    public class UserLoginHistoryRepository : IUserLoginHistoryRepository
     {
         private readonly DataContext _dataContext;
         public UserLoginHistoryRepository(DataContext dataContext) {

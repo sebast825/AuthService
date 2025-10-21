@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class RefreshTokenService : RefreshTokenServiceI
+    public class RefreshTokenService : IRefreshTokenService
     {
 
-        private readonly RefreshTokenRepositoryI _refreshTokenRepositoryI;
-        public RefreshTokenService(RefreshTokenRepositoryI refreshTokenRepositoryI)
+        private readonly IRefreshTokenRepository _refreshTokenRepositoryI;
+        public RefreshTokenService(IRefreshTokenRepository refreshTokenRepositoryI)
         {
             _refreshTokenRepositoryI = refreshTokenRepositoryI;
         }

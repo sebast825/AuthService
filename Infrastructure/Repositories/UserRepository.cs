@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class UserRepository : UserRepositoryI
+    public class UserRepository : IUserRepository
     {
         private readonly DataContext _dataContext;
         public UserRepository(DataContext dataContext) {

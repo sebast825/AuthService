@@ -14,7 +14,7 @@ namespace Tests.Services
     [TestClass]
     public class EmailAttemptsServiceTest
     {
-        private EmailAttemptsServiceI _EmailAttemptsServiceI;
+        private IEmailAttemptsService _EmailAttemptsServiceI;
         private  IMemoryCache _cache;
 
         [TestInitialize]

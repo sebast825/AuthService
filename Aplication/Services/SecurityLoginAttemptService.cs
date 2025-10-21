@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class SecurityLoginAttemptService : SecurityLoginAttemptServiceI
+    public class SecurityLoginAttemptService : ISecurityLoginAttemptService
     {
-        private readonly SecurityLoginAttemptRepositoryI _securityLoginAttemptRepositoryI;
+        private readonly ISecurityLoginAttemptRepository _securityLoginAttemptRepositoryI;
 
-        public SecurityLoginAttemptService(SecurityLoginAttemptRepositoryI securityLoginAttemptRepositoryI)
+        public SecurityLoginAttemptService(ISecurityLoginAttemptRepository securityLoginAttemptRepositoryI)
         {
             _securityLoginAttemptRepositoryI = securityLoginAttemptRepositoryI;
         }

@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class UserLoginHistoryService : UserLoginHistoryServiceI
+    public class UserLoginHistoryService : IUserLoginHistoryService
     {
-        private readonly UserLoginHistoryRepositoryI _loginAttemptRepositoryI;
-        public UserLoginHistoryService(UserLoginHistoryRepositoryI loginAttemptRepositoryI) {
+        private readonly IUserLoginHistoryRepository _loginAttemptRepositoryI;
+        public UserLoginHistoryService(IUserLoginHistoryRepository loginAttemptRepositoryI) {
             _loginAttemptRepositoryI = loginAttemptRepositoryI;
         }
         public async Task AddSuccessAttemptAsync(int userId, string ip, string deviceInfo)

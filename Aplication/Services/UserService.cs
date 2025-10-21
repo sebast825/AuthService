@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class UserService : UserServicesI
+    public class UserService : IUserServices
     {
-        private readonly UserRepositoryI _userRepositoryI;
-        public UserService(UserRepositoryI userRepositoryI)
+        private readonly IUserRepository _userRepositoryI;
+        public UserService(IUserRepository userRepositoryI)
         {
 
             _userRepositoryI = userRepositoryI;

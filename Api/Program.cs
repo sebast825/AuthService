@@ -15,17 +15,17 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 
 // Add services to the container.
-builder.Services.AddScoped<UserRepositoryI, UserRepository > ();
-builder.Services.AddScoped<RefreshTokenRepositoryI, RefreshTokenRepository>();
-builder.Services.AddScoped<UserLoginHistoryRepositoryI, UserLoginHistoryRepository>();
-builder.Services.AddScoped<SecurityLoginAttemptRepositoryI,SecurityLoginAttemptRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository > ();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
+builder.Services.AddScoped<ISecurityLoginAttemptRepository,SecurityLoginAttemptRepository>();
 
-builder.Services.AddScoped<UserServicesI, UserService>();
-builder.Services.AddScoped<JwtServiceI,JwtService> ();
-builder.Services.AddScoped<RefreshTokenServiceI, RefreshTokenService>();
-builder.Services.AddScoped<EmailAttemptsServiceI,EmailAttemptsService> ();
-builder.Services.AddScoped<UserLoginHistoryServiceI, UserLoginHistoryService>();
-builder.Services.AddScoped<SecurityLoginAttemptServiceI, SecurityLoginAttemptService>();
+builder.Services.AddScoped<IUserServices, UserService>();
+builder.Services.AddScoped<IJwtService,JwtService> ();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
+builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
+builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
 builder.Services.AddScoped<AuthUseCase>();
 

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Repositories
 {
-    public interface SecurityLoginAttemptRepositoryI
+    public interface IUserLoginHistoryRepository
     {
-        Task AddAsync(SecurityLoginAttempt securityLoginAttempt);
+        Task AddAsync(UserLoginHistory loginAttempt);
     }
 }

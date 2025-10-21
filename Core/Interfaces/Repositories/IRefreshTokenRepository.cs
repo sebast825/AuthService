@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Repositories
 {
-    public interface RefreshTokenRepositoryI
+    public interface IRefreshTokenRepository
     {
         Task AddAsync (RefreshToken token);
         Task<RefreshToken?> GetAsync(Expression<Func<RefreshToken, bool>> predicate);

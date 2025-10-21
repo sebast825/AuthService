@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Aplication.Services
 {
-    public class JwtService : JwtServiceI
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration; 
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class SecurityLoginAttemptRepository : SecurityLoginAttemptRepositoryI
+    public class SecurityLoginAttemptRepository : ISecurityLoginAttemptRepository
     {
         private readonly DataContext _dataContext;
 

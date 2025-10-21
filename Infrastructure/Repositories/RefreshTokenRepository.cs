@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class RefreshTokenRepository : RefreshTokenRepositoryI
+    public class RefreshTokenRepository : IRefreshTokenRepository
     {
         private readonly DataContext _dataContext;
         public RefreshTokenRepository(DataContext dataContext)

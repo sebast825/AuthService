@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface RefreshTokenServiceI
+    public interface IRefreshTokenService
     {
         RefreshToken CreateRefreshToken(int userId);
         Task AddAsync(RefreshToken token);

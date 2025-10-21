@@ -13,9 +13,9 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly UserServicesI _userServiceI;
+        private readonly IUserServices _userServiceI;
         private readonly AuthUseCase _authUseCase;
-        public AuthController(UserServicesI userServiceI, AuthUseCase authUseCase)
+        public AuthController(IUserServices userServiceI, AuthUseCase authUseCase)
         {
             _userServiceI = userServiceI;
             _authUseCase = authUseCase;

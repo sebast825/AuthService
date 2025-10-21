@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface EmailAttemptsServiceI
+    public interface ISecurityLoginAttemptService
     {
-        bool EmailIsBlocked(string email);
-        void ResetAttempts(string key);
-        void IncrementAttempts(string key);
-
+        Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo);
     }
 }

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface JwtServiceI
+    public interface IEmailAttemptsService
     {
-        public string GenerateAccessToken(string id);
+        bool EmailIsBlocked(string email);
+        void ResetAttempts(string key);
+        void IncrementAttempts(string key);
+
     }
 }

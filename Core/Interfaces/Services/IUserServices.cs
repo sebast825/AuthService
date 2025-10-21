@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services
 {
-    public interface UserServicesI
+    public interface IUserServices
     {
         Task AddAsync(UserCreateRequestDto userCreateDto);
         Task<UserResponseDto> ValidateCredentialsAsync(LoginRequestDto loginDto);

@@ -18,13 +18,13 @@ namespace Tests.Services
     [TestClass]
     public class RefreshTokenServiceTest
     {
-        private Mock<RefreshTokenRepositoryI> _mockRefreshTokenRepo;
-        private  RefreshTokenServiceI _refreshTokenServiceI;
+        private Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
+        private  IRefreshTokenService _refreshTokenServiceI;
 
         [TestInitialize]
         public void Setup()
         {
-            _mockRefreshTokenRepo = new Mock<RefreshTokenRepositoryI>();
+            _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
             _refreshTokenServiceI = new RefreshTokenService(_mockRefreshTokenRepo.Object);
         }
 

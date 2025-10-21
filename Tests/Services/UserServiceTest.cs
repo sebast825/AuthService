@@ -14,12 +14,12 @@ namespace Tests.Services
     public class UserServiceTest
     {
 
-        private Mock<UserRepositoryI> _mockUserRepo;
-        private UserServicesI _userService;
+        private Mock<IUserRepository> _mockUserRepo;
+        private IUserServices _userService;
         [TestInitialize]
         public void Setup()
         {
-            _mockUserRepo = new Mock<UserRepositoryI>();
+            _mockUserRepo = new Mock<IUserRepository>();
             _userService = new UserService(_mockUserRepo.Object);
         }
         /*

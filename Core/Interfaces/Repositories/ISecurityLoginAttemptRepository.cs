@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.Repositories
 {
-    public interface UserRepositoryI
+    public interface ISecurityLoginAttemptRepository
     {
-        Task AddAsync(User user);
-        Task<User?> GetByEmailAsync(string email);
-
+        Task AddAsync(SecurityLoginAttempt securityLoginAttempt);
     }
 }
