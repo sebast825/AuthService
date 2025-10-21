@@ -145,7 +145,17 @@ namespace Tests.UseCases
 
             Assert.AreEqual(acessToken2, acessToken);
         }
+        [TestMethod]
+        public async Task GenerateNewAccessTokenAsync_WhenRefreshTokenNotExist_ShouldThrow()
+        {
+            string refreshToken = "token not exist in db";
+            string acessToken2 = "acess";
+            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ThrowsAsync(new InvalidCredentialException(ErrorMessages.InvalidToken));           
+            
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() =>  _authUseCase.GenerateNewAccessTokenAsync(refreshToken));
 
+            Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
+        }
 
 
     }
