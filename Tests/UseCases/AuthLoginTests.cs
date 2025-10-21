@@ -1,4 +1,6 @@
-﻿using Aplication.UseCases;
+﻿using Aplication.Services;
+using Aplication.UseCases;
+using Core.Constants;
 using Core.Dto.Auth;
 using Core.Dto.User;
 using Core.Entities;
@@ -8,9 +10,11 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,6 +64,8 @@ namespace Tests.UseCases
         [TestMethod]
         public async Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
         {
+            // Arrange
+
             var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
             var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
 
@@ -71,8 +77,10 @@ namespace Tests.UseCases
             _mockRefreshTokenService.Setup(s => s.CreateRefreshToken(userResponse.Id))
                 .Returns(new RefreshToken { Token = "refresh_token" });
 
+            // Act
             var result = await _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device");
 
+            // Assert
             Assert.AreEqual("jwt_token", result.AccessToken);
             Assert.AreEqual("refresh_token", result.RefreshToken);
             Assert.AreEqual(userResponse, result.User);
@@ -81,6 +89,22 @@ namespace Tests.UseCases
             _mockLoginAttemptsService.Verify(s => s.AddSuccessAttemptAsync(userResponse.Id, "127.0.0.1", "device"), Times.Once);
             _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.CommitAsync(), Times.Once);
+
+        }
+        [TestMethod]
+        public async Task LoginAsync_ShouldThrow_WhenEmailIsBlocked()
+        {
+            // Arrange
+            var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
+            var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
+            _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(true);
+
+            // Act
+            var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device"));
+
+            // Assert
+            _mockEmailAttemptsService.Verify(s => s.EmailIsBlocked(loginDto.Email), Times.Once);
+            Assert.AreEqual(ErrorMessages.MaxLoginAttemptsExceeded, ex.Message);
 
         }
 
