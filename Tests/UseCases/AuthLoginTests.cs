@@ -131,7 +131,20 @@ namespace Tests.UseCases
 
         }
 
+        [TestMethod]
+        public async Task GenerateNewAccessTokenAsync_WhenValidRefreshToken_ShouldReturnAccessToken()
+        {
+            string refreshToken = "refresh";
+            string acessToken2 = "acess";
+            int userId = 1;
+            RefreshToken refreshTokenEntity = new RefreshToken { Token = refreshToken ,UserId = userId, ExpiresAt = DateTime.UtcNow.AddDays(2) };
+            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ReturnsAsync(refreshTokenEntity);
+            _mockJwtService.Setup(s => s.GenerateAccessToken(userId.ToString())).Returns(acessToken2);  
 
+            string acessToken = await _authUseCase.GenerateNewAccessTokenAsync(refreshToken);
+
+            Assert.AreEqual(acessToken2, acessToken);
+        }
 
 
 
