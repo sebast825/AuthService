@@ -63,7 +63,7 @@ namespace Tests.UseCases
 
 
         [TestMethod]
-        public async Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
+        public async Task LoginAsync_WhenCredentialsAreValid_ShouldReturnTokens()
         {
             // Arrange
 
@@ -95,7 +95,7 @@ namespace Tests.UseCases
 
         }
         [TestMethod]
-        public async Task LoginAsync_ShouldThrow_WhenCredentialsAreValid()
+        public async Task LoginAsync_WhenCredentialsAreValid_ShouldThrow()
         {
             // Arrange
             var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
@@ -115,7 +115,7 @@ namespace Tests.UseCases
 
         }
         [TestMethod]
-        public async Task LoginAsync_ShouldThrow_WhenEmailIsBlocked()
+        public async Task LoginAsync_WhenEmailIsBlocked_ShouldThrow()
         {
             // Arrange
             var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
