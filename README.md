@@ -41,7 +41,8 @@ AuthServiceSolution/
 
 **4. Manejo de login exitoso:**  
 - Se resetean los intentos de email.  
-- Se registra el intento exitoso en el historial de login.  
+- Se registra el intento exitoso en el historial de login.
+- Se invalida el Refresh Token existente.
 - Se generan JWT y Refresh Token.  
 - Se persiste el Refresh Token en la base de datos dentro de una transacción.
 
