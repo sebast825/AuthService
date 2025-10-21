@@ -63,7 +63,7 @@ namespace Tests.Services
             
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_InvalidToken_ThrowException()
+        public async Task RevokeRefreshToken_InvalidToken_Throw()
         {
             string token = "abc";
 
@@ -73,6 +73,40 @@ namespace Tests.Services
   
     
             var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshToken(token));
+            Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
+
+        }
+        [TestMethod]
+        public async Task RevokeRefreshToken_ValidUser_SetsRevokedTrue()
+        {
+            string token = "abc";
+            int userId = 1;
+            RefreshToken refreshToken = new RefreshToken() { Token = token, UserId = userId };
+
+            _mockRefreshTokenRepo
+                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<RefreshToken, bool>>>()))
+                 .ReturnsAsync(refreshToken);
+            _mockRefreshTokenRepo
+                .Setup(r => r.UpdateAsync(refreshToken))
+                .Returns(Task.CompletedTask);
+
+
+            await _refreshTokenService.RevokeRefreshToken(1);
+
+            Assert.IsTrue(refreshToken.Revoked);
+
+        }
+        [TestMethod]
+        public async Task RevokeRefreshToken_InvalidUser_Throw()
+        {
+            string token = "abc";
+            int userId = 1;
+            _mockRefreshTokenRepo
+                 .Setup(r => r.GetAsync(It.IsAny<Expression<Func<RefreshToken, bool>>>()))
+                 .ReturnsAsync((RefreshToken?)null);
+
+
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshToken(userId));
             Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
 
         }
