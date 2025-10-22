@@ -15,10 +15,12 @@ namespace Api.Controllers
     {
         private readonly IUserServices _userServiceI;
         private readonly AuthUseCase _authUseCase;
-        public AuthController(IUserServices userServiceI, AuthUseCase authUseCase)
+        private readonly IRefreshTokenService _refreshTokenService;
+        public AuthController(IUserServices userServiceI, AuthUseCase authUseCase,IRefreshTokenService refreshTokenService)
         {
             _userServiceI = userServiceI;
             _authUseCase = authUseCase;
+            _refreshTokenService = refreshTokenService;
         }
         [HttpPost("login")]
         public async Task<AuthResponseDto> Login(LoginRequestDto loginDto)
@@ -42,11 +44,15 @@ namespace Api.Controllers
             return await _authUseCase.GenerateNewAccessTokenAsync(refrehToken);
 
         }
-        /* [HttpPost("logout")]
-         public async Task<IActionResult> Logout()
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] string refreshToken)
+        {
+            await _refreshTokenService.RevokeRefreshTokenAsync(refreshToken);
+            return Ok(new { message = "Logged out successfully" });
+        }
 
 
-        
+        /*
 
          [HttpPost("forgot-password")]
              public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
