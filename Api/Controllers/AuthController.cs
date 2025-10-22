@@ -1,11 +1,7 @@
-﻿using Aplication.Services;
-using Aplication.UseCases;
+﻿using Aplication.UseCases;
 using Core.Dto.Auth;
 using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -27,13 +23,7 @@ namespace Api.Controllers
             var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
             return await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo);
         }
-        [HttpGet("check")]
-        [Authorize]
-        public IActionResult Check()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Ok(new { messagge = "Token Valido", userId });
-        }
+
         [HttpPost("access-token")]
         public async Task<string> RefreshToken([FromBody] string refrehToken)
         {
