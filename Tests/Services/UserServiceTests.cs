@@ -23,9 +23,16 @@ namespace Tests.Services
             _userService = new UserService(_mockUserRepo.Object);
         }
         /*
+         * HashPassword
           password: "string",
          hashPasword : "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW"
           */
+
+        /*
+         * EnhancedHashPassword
+            var userPassword = "stringstringstring";
+            string hashPasword = "$2a$12$O3yjBd5ZH9RhJoT9jEiS2OoodmEqk3A8kfkJh1zvGGHZXiPd2S.wm";
+        */
 
 
         [TestMethod]
@@ -34,10 +41,10 @@ namespace Tests.Services
             // Configuración específica de este test
 
             var userEmail = "carmelo@gmail.com";
-            var userPassword = "string";
-            string hashPasword = "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW";
+            var userPassword = "stringstringstring";
+            string hashPasword = "$2a$12$O3yjBd5ZH9RhJoT9jEiS2OoodmEqk3A8kfkJh1zvGGHZXiPd2S.wm";
 
-         
+
             _mockUserRepo.Setup(r => r.GetByEmailAsync(userEmail))
                     .Returns(Task.FromResult(new User { Email = userEmail, Password = hashPasword }));
 
@@ -67,7 +74,7 @@ namespace Tests.Services
                 Email = userEmail,
                 Password = userPassword
             };
-          
+
 
             var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _userService.ValidateCredentialsAsync(loginDto));
             Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
@@ -81,7 +88,7 @@ namespace Tests.Services
             var userEmail = "carmelo@gmail.com";
             var userPassword = "testste";
             string hashPasword = "$2a$11$b8bLW6gG7QmCCsbr/2vy5Orfz8G5HCG7QkmBAg2cqDlu5el7CEMUW";
-     
+
 
             _mockUserRepo.Setup(r => r.GetByEmailAsync(userEmail))
                            .Returns(Task.FromResult(new User { Email = userEmail, Password = hashPasword }));
