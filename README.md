@@ -3,14 +3,14 @@
 ```
 AuthServiceSolution/
 │
-├─ Core/                       
+├─ Core/
+│  ├─ Constants/
+│  ├─ Dto/                     
 │  ├─ Entities/
 │  ├─ Interfaces/
-│  ├─ Constants/
 │
 ├─ Infrastructure/           
 │  ├─ Data/
-│  │   └─ DataContext.cs
 │  ├─ Repositories/ 
 │
 ├─ Application/              
