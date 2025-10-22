@@ -1,5 +1,6 @@
 ﻿using Azure.Core.GeoJson;
 using Core.Constants;
+using Core.Dto.RefreshToken;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -58,7 +59,7 @@ namespace Aplication.Services
             }
          
         }
-        public async Task<RefreshToken> GetValidRefreshTokenAsync(string refreshToken)
+        public async Task<RefreshTokenResponseDto> GetValidRefreshTokenAsync(string refreshToken)
         {
             RefreshToken? refreshTokenEntity = await _refreshTokenRepository.GetAsync(t => t.Token == refreshToken);
             if (refreshTokenEntity == null)
@@ -68,7 +69,15 @@ namespace Aplication.Services
             {
                 throw new InvalidCredentialException();
             }
-                return refreshTokenEntity;
+            
+                return new RefreshTokenResponseDto
+                {
+                    UserId = refreshTokenEntity.UserId,
+                    ExpiresAt = refreshTokenEntity.ExpiresAt,
+                    Revoked = refreshTokenEntity.Revoked,
+                    Token = refreshTokenEntity.Token
+
+                };
         }
         private string GenerateRefreshToken()
         {

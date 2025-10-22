@@ -2,6 +2,7 @@
 using Azure.Core;
 using Core.Constants;
 using Core.Dto.Auth;
+using Core.Dto.RefreshToken;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces;
@@ -62,7 +63,7 @@ namespace Aplication.UseCases
         public async Task<string> GenerateNewAccessTokenAsync(string refreshToken)
         {
 
-            RefreshToken refreshTokenResponse = await _refreshTokenService.GetValidRefreshTokenAsync(refreshToken);
+            RefreshTokenResponseDto refreshTokenResponse = await _refreshTokenService.GetValidRefreshTokenAsync(refreshToken);
 
             string accessToken = _jwtService.GenerateAccessToken(refreshTokenResponse.UserId.ToString());
             return accessToken;

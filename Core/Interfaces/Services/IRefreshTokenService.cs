@@ -1,4 +1,5 @@
-﻿using Core.Dto.User;
+﻿using Core.Dto.RefreshToken;
+using Core.Dto.User;
 using Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,6 @@ namespace Core.Interfaces.Services
         Task AddAsync(RefreshToken token);
         Task RevokeRefreshTokenAsync(string token);
         Task RevokeRefreshTokenIfExistAsync(int userId);
-        Task<RefreshToken> GetValidRefreshTokenAsync(string token);
+        Task<RefreshTokenResponseDto> GetValidRefreshTokenAsync(string token);
     }
 }
