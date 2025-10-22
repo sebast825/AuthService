@@ -13,23 +13,19 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly IUserServices _userServiceI;
         private readonly AuthUseCase _authUseCase;
         private readonly IRefreshTokenService _refreshTokenService;
-        public AuthController(IUserServices userServiceI, AuthUseCase authUseCase,IRefreshTokenService refreshTokenService)
+        public AuthController( AuthUseCase authUseCase,IRefreshTokenService refreshTokenService)
         {
-            _userServiceI = userServiceI;
             _authUseCase = authUseCase;
             _refreshTokenService = refreshTokenService;
         }
         [HttpPost("login")]
         public async Task<AuthResponseDto> Login(LoginRequestDto loginDto)
         {
-            //await _userServiceI.ValidateCredentialsAsync(loginDto);
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
             return await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo);
-           // return Ok();
         }
         [HttpGet("check")]
         [Authorize]
@@ -51,11 +47,5 @@ namespace Api.Controllers
             return Ok(new { message = "Logged out successfully" });
         }
 
-
-        /*
-
-         [HttpPost("forgot-password")]
-             public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
-        */
     }
 }
