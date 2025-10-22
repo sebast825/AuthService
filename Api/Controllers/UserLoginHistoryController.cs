@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.UserLoginHistory;
+using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ namespace Api.Controllers
             _userLoginHistoryService = userLoginHistoryService;
         }
         [HttpGet("id")]
-        public async Task<List<UserLoginHistory>> GetById(int id)
+        public async Task<List<UserLoginHistoryDto>> GetById(int id)
         {
             return await _userLoginHistoryService.GetAllByUserIdAsync(id);
             

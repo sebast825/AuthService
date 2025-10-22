@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.UserLoginHistory;
+using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using System;
@@ -26,9 +27,18 @@ namespace Aplication.Services
             await _loginAttemptRepository.AddAsync(loginAttempt);            
         }
 
-        public async Task<List<UserLoginHistory>> GetAllByUserIdAsync(int userId)
+        public async Task<List<UserLoginHistoryDto>> GetAllByUserIdAsync(int userId)
         {
-            return await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
+            List<UserLoginHistory> userLoginHistory =  await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
+
+            return userLoginHistory.Select(history => new UserLoginHistoryDto
+            {
+                Id = history.Id,
+                CreatedAt = history.CreatedAt,  
+                UserId = history.UserId,
+                IpAddress = history.IpAddress,
+                DeviceInfo = history.DeviceInfo
+            }).ToList();
         }
     }
 }

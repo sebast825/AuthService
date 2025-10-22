@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.UserLoginHistory;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Core.Interfaces.Services
     public interface IUserLoginHistoryService
     {
         Task AddSuccessAttemptAsync(int userId, string ip,string deviceInfo);
-        Task<List<UserLoginHistory>> GetAllByUserIdAsync(int userId);
+        Task<List<UserLoginHistoryDto>> GetAllByUserIdAsync(int userId);
 
     }
 }
