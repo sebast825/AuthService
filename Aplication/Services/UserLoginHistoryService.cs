@@ -27,11 +27,11 @@ namespace Aplication.Services
             await _loginAttemptRepository.AddAsync(loginAttempt);            
         }
 
-        public async Task<List<UserLoginHistoryDto>> GetAllByUserIdAsync(int userId)
+        public async Task<List<UserLoginHistoryResponseDto>> GetAllByUserIdAsync(int userId)
         {
             List<UserLoginHistory> userLoginHistory =  await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
 
-            return userLoginHistory.Select(history => new UserLoginHistoryDto
+            return userLoginHistory.Select(history => new UserLoginHistoryResponseDto
             {
                 Id = history.Id,
                 CreatedAt = history.CreatedAt,  

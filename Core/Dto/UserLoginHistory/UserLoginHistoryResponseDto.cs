@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Dto.UserLoginHistory
 {
-    public class UserLoginHistoryDto
+    public class UserLoginHistoryResponseDto
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
