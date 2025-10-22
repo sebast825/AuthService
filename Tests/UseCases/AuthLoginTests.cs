@@ -66,9 +66,9 @@ namespace Tests.UseCases
         public async Task LoginAsync_WhenCredentialsAreValid_ShouldReturnTokens()
         {
             // Arrange
-
+            int userId = 1;
             var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
-            var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
+            var userResponse = new UserResponseDto { Id = userId, FullName = "Carmelo Sanchez" };
 
             _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(false);
             _mockUserServices.Setup(s => s.ValidateCredentialsAsync(loginDto))
@@ -89,7 +89,7 @@ namespace Tests.UseCases
             _mockEmailAttemptsService.Verify(s => s.ResetAttempts(loginDto.Email), Times.Once);
             _mockLoginAttemptsService.Verify(s => s.AddSuccessAttemptAsync(userResponse.Id, "127.0.0.1", "device"), Times.Once);
             _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
-            _mockRefreshTokenService.Verify(s => s.RevokeRefreshToken(1), Times.Once);
+            _mockRefreshTokenService.Verify(s => s.RevokeRefreshTokenIfExistAsync(userId), Times.Once);
 
             _mockUnitOfWork.Verify(u => u.CommitAsync(), Times.Once);
 

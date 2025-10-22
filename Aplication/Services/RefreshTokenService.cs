@@ -39,7 +39,7 @@ namespace Aplication.Services
             await _refreshTokenRepository.AddAsync(token);
         }
 
-        public async Task RevokeRefreshToken(string token)
+        public async Task RevokeRefreshTokenAsync(string token)
         {
             RefreshToken? refreshToken = await _refreshTokenRepository.GetAsync(t => t.Token == token);
             if (refreshToken == null) {

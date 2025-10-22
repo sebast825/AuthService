@@ -43,7 +43,7 @@ namespace Tests.Services
         }
 
         [TestMethod]
-        public async Task RevokeRefreshToken_WhenValidToken_ShouldSetsRevokedTrue()
+        public async Task RevokeRefreshTokenAsync_WhenValidToken_ShouldSetsRevokedTrue()
         {
             string token = "abc";
             int userId = 1;
@@ -57,13 +57,13 @@ namespace Tests.Services
                 .Returns(Task.CompletedTask);
 
 
-            await _refreshTokenService.RevokeRefreshToken(refreshToken.Token);
+            await _refreshTokenService.RevokeRefreshTokenAsync(refreshToken.Token);
 
             Assert.IsTrue(refreshToken.Revoked);
             
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_WhenInvalidTokenShouldThrow()
+        public async Task RevokeRefreshTokenAsync_WhenInvalidTokenShouldThrow()
         {
             string token = "abc";
 
@@ -72,12 +72,12 @@ namespace Tests.Services
                  .ReturnsAsync((RefreshToken?)null);
   
     
-            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshToken(token));
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshTokenAsync(token));
             Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
 
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_WhenValidUser_SholuldSetsRevokedTrue()
+        public async Task RevokeRefreshTokenAsync_WhenValidUser_SholuldSetsRevokedTrue()
         {
             string token = "abc";
             int userId = 1;
@@ -91,13 +91,13 @@ namespace Tests.Services
                 .Returns(Task.CompletedTask);
 
 
-            await _refreshTokenService.RevokeRefreshToken(1);
+            await _refreshTokenService.RevokeRefreshTokenAsync(userId.ToString());
 
             Assert.IsTrue(refreshToken.Revoked);
 
         }
         [TestMethod]
-        public async Task RevokeRefreshToken_WhenInvalidUser_ShouldThrow()
+        public async Task RevokeRefreshTokenAsync_WhenInvalidUser_ShouldThrow()
         {
             string token = "abc";
             int userId = 1;
@@ -106,7 +106,7 @@ namespace Tests.Services
                  .ReturnsAsync((RefreshToken?)null);
 
 
-            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshToken(userId));
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _refreshTokenService.RevokeRefreshTokenAsync(userId.ToString()));
             Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
 
         }
