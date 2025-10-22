@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.SecurityLoginAttempt;
+using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using System;
@@ -17,7 +18,7 @@ namespace Aplication.Services
         {
             _securityLoginAttemptRepository = securityLoginAttemptRepository;
         }
-        public async Task AddFailedLoginAttemptAsync(string email,string failureReason, string ipAddrress, string deviceInfo)
+        public async Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo)
         {
             SecurityLoginAttempt securityLoginAttempt = new SecurityLoginAttempt()
             {
@@ -30,9 +31,20 @@ namespace Aplication.Services
 
             await _securityLoginAttemptRepository.AddAsync(securityLoginAttempt);
         }
-        public async Task<List<SecurityLoginAttempt>> GetAllAsync()
+        public async Task<List<SecurityLoginAttemptResponseDto>> GetAllAsync()
         {
-            return await _securityLoginAttemptRepository.GetAllAsync();
+            List<SecurityLoginAttempt> securityLoginAttemptList = await _securityLoginAttemptRepository.GetAllAsync();
+
+
+            return securityLoginAttemptList.Select(attempt => new SecurityLoginAttemptResponseDto
+            {
+                Id = attempt.Id,
+                CreatedAt = attempt.CreatedAt,
+                IpAddress = attempt.IpAddress,
+                DeviceInfo = attempt.DeviceInfo,
+                Email = attempt.Email,
+                FailureReason = attempt.FailureReason
+            }).ToList();
         }
     }
 }

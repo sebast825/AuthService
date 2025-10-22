@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Dto.SecurityLoginAttempt;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Core.Interfaces.Services
     public interface ISecurityLoginAttemptService
     {
         Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo);
-        Task<List<SecurityLoginAttempt>> GetAllAsync();
+        Task<List<SecurityLoginAttemptResponseDto>> GetAllAsync();
     }
 }

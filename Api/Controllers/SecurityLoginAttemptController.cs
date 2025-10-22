@@ -1,4 +1,5 @@
 ﻿using Aplication.Services;
+using Core.Dto.SecurityLoginAttempt;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace Api.Controllers
             _securityLoginAttemptService = securityLoginAttemptService;
         }
         [HttpGet]
-        public async Task<List<SecurityLoginAttempt>> GetAll()
+        public async Task<List<SecurityLoginAttemptResponseDto>> GetAll()
         {
             return await _securityLoginAttemptService.GetAllAsync();
          
