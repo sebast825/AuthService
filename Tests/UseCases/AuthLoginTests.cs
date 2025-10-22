@@ -2,6 +2,7 @@
 using Aplication.UseCases;
 using Core.Constants;
 using Core.Dto.Auth;
+using Core.Dto.RefreshToken;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces;
@@ -137,8 +138,8 @@ namespace Tests.UseCases
             string refreshToken = "refresh";
             string acessToken2 = "acess";
             int userId = 1;
-            RefreshToken refreshTokenEntity = new RefreshToken { Token = refreshToken ,UserId = userId, ExpiresAt = DateTime.UtcNow.AddDays(2) };
-            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ReturnsAsync(refreshTokenEntity);
+            RefreshTokenResponseDto refreshTokenDto= new RefreshTokenResponseDto { Token = refreshToken ,UserId = userId, ExpiresAt = DateTime.UtcNow.AddDays(2) };
+            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ReturnsAsync(refreshTokenDto);
             _mockJwtService.Setup(s => s.GenerateAccessToken(userId.ToString())).Returns(acessToken2);  
 
             string acessToken = await _authUseCase.GenerateNewAccessTokenAsync(refreshToken);
