@@ -25,7 +25,7 @@ namespace Aplication.UseCases
         private readonly IUserServices _userServices;
         private readonly IJwtService _jwtService;
         private readonly IRefreshTokenService _refreshTokenService;
-        private readonly IEmailAttemptsService _EmailAttemptsService;
+        private readonly IEmailAttemptsService _emailAttemptsService;
         private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
         private readonly ILogger<AuthUseCase> _logger;
@@ -37,7 +37,7 @@ namespace Aplication.UseCases
             _userServices = userServices;
             _jwtService = jwtService;
             _refreshTokenService = refreshTokenService;
-            _EmailAttemptsService = EmailAttemptsService;
+            _emailAttemptsService = EmailAttemptsService;
             _loginAttemptsService = loginAttemptsService;
             _securityLoginAttemptService = securityLoginAttemptService;
             _logger = logger;
@@ -45,7 +45,7 @@ namespace Aplication.UseCases
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
         {
-            await ThrowAndRegisterIfEmailIsBlockAsync(loginDto.Email, ipAddress, deviceInfo);
+            await ThrowAndRegisterIfEmailIsBlockedAsync(loginDto.Email, ipAddress, deviceInfo);
 
             try
             {
@@ -70,9 +70,9 @@ namespace Aplication.UseCases
 
         }
 
-        private async Task ThrowAndRegisterIfEmailIsBlockAsync(string email, string ipAddress, string deviceInfo)
+        private async Task ThrowAndRegisterIfEmailIsBlockedAsync(string email, string ipAddress, string deviceInfo)
         {
-            bool emailIsBlocked = _EmailAttemptsService.EmailIsBlocked(email);
+            bool emailIsBlocked = _emailAttemptsService.EmailIsBlocked(email);
             if (emailIsBlocked)
             {
                 try
@@ -82,8 +82,9 @@ namespace Aplication.UseCases
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogWarning(ex, "Failed to audit failed login  for user {email}", email);
-
+                    _logger.LogWarning(
+                        "Blocked login attempt detected for {Email} from {IpAddress} ({DeviceInfo})",
+                        email, ipAddress, deviceInfo);
                 }
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
@@ -95,7 +96,7 @@ namespace Aplication.UseCases
         private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
         {
 
-            _EmailAttemptsService.ResetAttempts(email);
+            _emailAttemptsService.ResetAttempts(email);
             await TryAddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
@@ -131,7 +132,7 @@ namespace Aplication.UseCases
 
         private async Task RegisterFailedLoginAndThrowAsync(string email, string ipAddress, string deviceInfo)
         {
-            _EmailAttemptsService.IncrementAttempts(email);
+            _emailAttemptsService.IncrementAttempts(email);
             await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
