@@ -28,7 +28,6 @@ builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<AuthUseCase>();
 
 builder.Services.AddHttpContextAccessor();
