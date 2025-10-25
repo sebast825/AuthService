@@ -68,3 +68,16 @@ AuthServiceSolution/
 - Implement queue-based persistence for failed login attempts to prevent database connection pool saturation during brute force attacks
 - Add proxy configuration middleware to accurately capture real client IP addresses, enhancing security, audit trails, and IP-based blocking in production environments
 - Secure password recovery endpoint with time-limited tokens
+-  Separation of Responsibilities in AuthUseCase
+
+
+> In this project, the authentication use case (`AuthUseCase`) is designed with a clear separation of responsibilities in mind. By using coordinators, each aspect of the authentication workflow—such as user validation, token management, and login auditing can be encapsulated separately, making the code more organized, maintainable, and easier to understand. 
+
+
+| Coordinator       | Responsibility                                      | Internal Services                                       |
+|------------------|----------------------------------------------------|--------------------------------------------------------|
+| UserCoordinator   | Handle user validation, credentials, and account blocking | `_userServices`, `_emailAttemptsService`             |
+| TokenCoordinator  | Generate, revoke, and manage tokens               | `_jwtService`, `_refreshTokenService`                |
+| AuditCoordinator  | Record login audits and failed login attempts     | `_loginAttemptsService`, `_securityLoginAttemptService`, `_logger` |
+
+
