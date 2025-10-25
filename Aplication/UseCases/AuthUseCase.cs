@@ -75,7 +75,16 @@ namespace Aplication.UseCases
             bool emailIsBlocked = _EmailAttemptsService.EmailIsBlocked(email);
             if (emailIsBlocked)
             {
-                await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+                try
+                {
+                    await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to audit failed login  for user {email}", email);
+
+                }
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
             }
