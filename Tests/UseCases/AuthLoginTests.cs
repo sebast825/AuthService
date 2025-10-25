@@ -1,5 +1,6 @@
 ﻿using Aplication.Services;
 using Aplication.UseCases;
+using Castle.Core.Logging;
 using Core.Constants;
 using Core.Dto.Auth;
 using Core.Dto.RefreshToken;
@@ -9,6 +10,7 @@ using Core.Interfaces;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -35,7 +37,7 @@ namespace Tests.UseCases
         private Mock<IUserLoginHistoryService> _mockLoginAttemptsService;
         private Mock<ISecurityLoginAttemptService> _mockSecurityLoginAttemptService;
         private Mock<IDbContextTransaction> _mockTransaction;
-        private Mock<IUnitOfWork> _mockUnitOfWork;
+        private Mock<ILogger<AuthUseCase>> _mockLogger;
         private AuthUseCase _authUseCase;
 
         [TestInitialize]
@@ -47,7 +49,7 @@ namespace Tests.UseCases
             _mockEmailAttemptsService = new Mock<IEmailAttemptsService>();
             _mockLoginAttemptsService = new Mock<IUserLoginHistoryService>();
             _mockSecurityLoginAttemptService = new Mock<ISecurityLoginAttemptService>();
-            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockLogger = new Mock<ILogger<AuthUseCase>>() ;
 
 
 
@@ -58,7 +60,7 @@ namespace Tests.UseCases
                 _mockEmailAttemptsService.Object,
                 _mockLoginAttemptsService.Object,
                 _mockSecurityLoginAttemptService.Object,
-                _mockUnitOfWork.Object
+                _mockLogger.Object
             );
         }
 
@@ -92,7 +94,6 @@ namespace Tests.UseCases
             _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
             _mockRefreshTokenService.Verify(s => s.RevokeRefreshTokenIfExistAsync(userId), Times.Once);
 
-            _mockUnitOfWork.Verify(u => u.CommitAsync(), Times.Once);
 
         }
         [TestMethod]
