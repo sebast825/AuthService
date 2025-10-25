@@ -9,6 +9,7 @@ using Core.Interfaces;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,11 @@ namespace Aplication.UseCases
         private readonly IEmailAttemptsService _EmailAttemptsService;
         private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<AuthUseCase> _logger;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
             ISecurityLoginAttemptService securityLoginAttemptService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, ILogger<AuthUseCase> logger)
         {
             _userServices = userServices;
             _jwtService = jwtService;
@@ -39,7 +40,7 @@ namespace Aplication.UseCases
             _EmailAttemptsService = EmailAttemptsService;
             _loginAttemptsService = loginAttemptsService;
             _securityLoginAttemptService = securityLoginAttemptService;
-            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
@@ -85,20 +86,21 @@ namespace Aplication.UseCases
          * Call fn to generate tokens */
         private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
         {
+         
             _EmailAttemptsService.ResetAttempts(email);
-            await _unitOfWork.BeginTransactionAsync();
+            AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
+
             try
             {
                 await _loginAttemptsService.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
-                AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
-                await _unitOfWork.CommitAsync();
-                return authResponseDto;
+                throw new Exception();
             }
             catch
             {
-                await _unitOfWork.RollbackAsync();
-                throw;
+                _logger.LogWarning("Failed to audit login success for user {UserId}", userResponseDto.Id);
+               
             }
+            return authResponseDto;
         }
 
         private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
