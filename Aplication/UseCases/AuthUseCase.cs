@@ -32,7 +32,7 @@ namespace Aplication.UseCases
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
             ISecurityLoginAttemptService securityLoginAttemptService,
-            IUnitOfWork unitOfWork, ILogger<AuthUseCase> logger)
+            ILogger<AuthUseCase> logger)
         {
             _userServices = userServices;
             _jwtService = jwtService;
@@ -50,7 +50,6 @@ namespace Aplication.UseCases
             try
             {
                 UserResponseDto userResponseDto = await _userServices.ValidateCredentialsAsync(loginDto);
-
                 return await HandleSuccessfulLoginAsync(userResponseDto, loginDto.Email, ipAddress, deviceInfo);
             }
             catch (InvalidCredentialException ex)
@@ -86,23 +85,26 @@ namespace Aplication.UseCases
          * Call fn to generate tokens */
         private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
         {
-         
+
             _EmailAttemptsService.ResetAttempts(email);
+            await TryAddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
-            try
-            {
-                await _loginAttemptsService.AddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
-                throw new Exception();
-            }
-            catch
-            {
-                _logger.LogWarning("Failed to audit login success for user {UserId}", userResponseDto.Id);
-               
-            }
             return authResponseDto;
         }
+        private async Task TryAddSuccessAttemptAsync(int userId, string ipAddress, string deviceInfo)
 
+        {
+            try
+            {
+                await _loginAttemptsService.AddSuccessAttemptAsync(userId, ipAddress, deviceInfo);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning(ex,"Failed to audit login success for user {UserId}", userId);
+
+            }
+        }
         private async Task<AuthResponseDto> HandleTokenAsync(UserResponseDto userResponseDto)
         {
             string jwtToken = _jwtService.GenerateAccessToken(userResponseDto.Id.ToString());
