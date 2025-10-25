@@ -15,9 +15,9 @@ namespace Api.Controllers
             _userLoginHistoryService = userLoginHistoryService;
         }
         [HttpGet("id")]
-        public async Task<List<UserLoginHistoryResponseDto>> GetById(int id)
+        public async Task<ActionResult<List<UserLoginHistoryResponseDto>>> GetById(int id)
         {
-            return await _userLoginHistoryService.GetAllByUserIdAsync(id);
+            return Ok(await _userLoginHistoryService.GetAllByUserIdAsync(id));
             
         }
     }

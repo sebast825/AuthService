@@ -17,17 +17,17 @@ namespace Api.Controllers
             _refreshTokenService = refreshTokenService;
         }
         [HttpPost("login")]
-        public async Task<AuthResponseDto> Login(LoginRequestDto loginDto)
+        public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto loginDto)
         {
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
-            return await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo);
+            return Ok(await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo));
         }
 
         [HttpPost("access-token")]
-        public async Task<string> RefreshToken([FromBody] string refrehToken)
+        public async Task<ActionResult<string>> RefreshToken([FromBody] string refrehToken)
         {
-            return await _authUseCase.GenerateNewAccessTokenAsync(refrehToken);
+            return Ok(await _authUseCase.GenerateNewAccessTokenAsync(refrehToken));
 
         }
         [HttpPost("logout")]

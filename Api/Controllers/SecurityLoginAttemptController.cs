@@ -16,9 +16,9 @@ namespace Api.Controllers
             _securityLoginAttemptService = securityLoginAttemptService;
         }
         [HttpGet]
-        public async Task<List<SecurityLoginAttemptResponseDto>> GetAll()
+        public async Task<ActionResult<List<SecurityLoginAttemptResponseDto>>> GetAll()
         {
-            return await _securityLoginAttemptService.GetAllAsync();
+            return  Ok(await _securityLoginAttemptService.GetAllAsync());
          
         }
     }
