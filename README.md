@@ -1,5 +1,27 @@
 # AuthService
 
+## Run App
+```bash
+# Navigate to the API folder
+cd AuthServiceSolution/Api
+
+# Restore dependencies
+dotnet restore
+
+# Run the application
+dotnet run
+```
+
+## Run Tests
+```bash
+# Navigate to the solution root
+cd AuthServiceSolution
+
+# Run all tests
+dotnet test
+```
+
+## Project Structure & Architecture
 ```
 AuthServiceSolution/
 │
@@ -42,7 +64,7 @@ AuthServiceSolution/
 - SecurityLoginAttempt: Failed attempt monitoring and block tracking
 - EmailAttemptsService: Real-time brute force prevention
 
-## Login Use Case
+## Auth Use Case
 
 - Credential validation with account lockout handling
 - Automatic invalidation of previous tokens when generating new ones
