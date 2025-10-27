@@ -16,9 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-
-
 // Add services to the container.
 builder.Services.AddScoped<IUserRepository, UserRepository > ();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -32,20 +29,19 @@ builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
+builder.Services.AddScoped<AuthUseCase>();
+
 builder.Services.AddSingleton<IEventConsumer>( sp =>
 {
     return Task.Run(() => RabbitMqEventConsumer.CreateAsync()).Result;
 });
-
-
-builder.Services.AddHostedService<RabbitMQBackgroundService>();
-builder.Services.AddScoped(sp =>
+builder.Services.AddSingleton<IEventProducer>(sp =>
 {
     return Task.Run(() => RabbitMqEventProducer.CreateAsync()).Result;
 });
-      
 
-builder.Services.AddScoped<AuthUseCase>();
+builder.Services.AddHostedService<RabbitMQBackgroundService>();      
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
