@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces.EventBus
 {
-    public interface IEventPublisher
+    public interface IEventProducer
     {
-        Task PublishAsync<TEvent>(TEvent @event);
+        Task PublishSuccessfulLoginAttemptAsync(string message);
+        Task PublishFailedLoginAttemptAsync(string message);
     }
 }
