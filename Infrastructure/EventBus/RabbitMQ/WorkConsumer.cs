@@ -22,6 +22,21 @@ namespace Infrastructure.EventBus.RabbitMQ
             var factory = new ConnectionFactory() { HostName = hostName };
             var _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
+            await SetupRabbitMQ();
+        }
+
+        private async Task SetupRabbitMQ()
+        {
+            // Exchange
+            await _channel.ExchangeDeclareAsync("login-exchange", ExchangeType.Direct);
+
+            // queue
+            await _channel.QueueDeclareAsync("login-success-queue", durable: true, exclusive: false, autoDelete: false);
+            await _channel.QueueDeclareAsync("login-failed-queue", durable: true, exclusive: false, autoDelete: false);
+
+            // Bindings
+            await _channel.QueueBindAsync("login-success-queue", "login-exchange", "success");
+            await _channel.QueueBindAsync("login-failed-queue", "login-exchange", "failed");
         }
         public async Task ConsumirExitosos()
         {
