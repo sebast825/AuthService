@@ -6,6 +6,7 @@ using Core.Dto.RefreshToken;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Interfaces.EventBus;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.EventBus.RabbitMQ;
@@ -30,11 +31,11 @@ namespace Aplication.UseCases
         private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
         private readonly ILogger<AuthUseCase> _logger;
-        private readonly RabbitMqEventProducer _workProducer;
+        private readonly IEventProducer _eventProducer;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
             ISecurityLoginAttemptService securityLoginAttemptService,
-            ILogger<AuthUseCase> logger, RabbitMqEventProducer workProducer)
+            ILogger<AuthUseCase> logger, IEventProducer eventProducer)
         {
             _userServices = userServices;
             _jwtService = jwtService;
@@ -43,7 +44,7 @@ namespace Aplication.UseCases
             _loginAttemptsService = loginAttemptsService;
             _securityLoginAttemptService = securityLoginAttemptService;
             _logger = logger;
-            _workProducer = workProducer;
+            _eventProducer = eventProducer;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
@@ -57,7 +58,7 @@ namespace Aplication.UseCases
             }
             catch (InvalidCredentialException ex)
             {
-                await _workProducer.PublicarLoginFallido("Failed Attempt");
+                await _eventProducer.PublishFailedLoginAttemptAsync("Failed Attempt");
                 await RegisterFailedLoginAndThrowAsync(loginDto.Email, ipAddress, deviceInfo);
                 throw;
             }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Core.Interfaces.EventBus;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Abstractions;
 using RabbitMQ.Client;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class RabbitMqEventProducer : IAsyncDisposable
+    public class RabbitMqEventProducer : IEventProducer, IAsyncDisposable
     {
         private IConnection? _connection;
         private  IChannel? _channel;
@@ -30,15 +31,15 @@ namespace Infrastructure.EventBus.RabbitMQ
 
    
 
-        public async Task PublicarLoginExitoso(string mensaje)
+        public async Task PublishSuccessfulLoginAttemptAsync(string message)
         {
-            var body = Encoding.UTF8.GetBytes(mensaje);
+            var body = Encoding.UTF8.GetBytes(message);
             await _channel.BasicPublishAsync("login-exchange", "success", body);
         }
 
-        public async Task PublicarLoginFallido(string mensaje)
+        public async Task PublishFailedLoginAttemptAsync(string message)
         {
-            var body = Encoding.UTF8.GetBytes(mensaje);
+            var body = Encoding.UTF8.GetBytes(message);
             await _channel.BasicPublishAsync("login-exchange", "failed", body);
         }
 
