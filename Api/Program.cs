@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Infrastructure.EventBus.RabbitMQ;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
@@ -31,6 +32,11 @@ builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
 builder.Services.AddHostedService<RabbitMQBackgroundService>();
+builder.Services.AddScoped(sp =>
+{
+    return Task.Run(() => WorkProducer.CreateAsync()).Result;
+});
+      
 
 builder.Services.AddScoped<AuthUseCase>();
 
@@ -46,13 +52,11 @@ builder.Services.AddIpRateLimit(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
 
-builder.Services.AddSingleton<WorkProducer>();
-builder.Services.AddSingleton<WorkConsumer>();
+
 
 var app = builder.Build();
 
-var producer = app.Services.GetRequiredService<WorkProducer>();
-await producer.InitializeAsync();
+
 
 
 using var scope = app.Services.CreateScope();

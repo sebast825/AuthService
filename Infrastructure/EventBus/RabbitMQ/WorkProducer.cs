@@ -9,19 +9,27 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class WorkProducer
+    public class WorkProducer : IAsyncDisposable
     {
         private IConnection? _connection;
         private  IChannel? _channel;
-        public async Task InitializeAsync(string hostName = "localhost")
+        private WorkProducer(IConnection connection, IChannel channel)
         {
-            var factory = new ConnectionFactory() { HostName = hostName };
-            _connection = await factory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
-            await SetupRabbitMQ();
+            _connection = connection;
+            _channel = channel;
         }
 
-        private async Task SetupRabbitMQ()
+        public static async Task<WorkProducer> CreateAsync(string hostName = "localhost")
+        {
+            var factory = new ConnectionFactory() { HostName = hostName };
+            var connection = await factory.CreateConnectionAsync();
+            var channel = await connection.CreateChannelAsync();
+            var producer = new WorkProducer(connection, channel);
+            await producer.SetupRabbitMQAsync();
+            return producer;
+        }
+
+        private async Task SetupRabbitMQAsync()
         {
             // Exchange
             await _channel.ExchangeDeclareAsync("login-exchange", ExchangeType.Direct);
@@ -45,6 +53,12 @@ namespace Infrastructure.EventBus.RabbitMQ
         {
             var body = Encoding.UTF8.GetBytes(mensaje);
             await _channel.BasicPublishAsync("login-exchange", "failed", body);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _channel?.CloseAsync();
+            await _connection?.CloseAsync();
         }
     }
 }
