@@ -25,23 +25,10 @@ namespace Infrastructure.EventBus.RabbitMQ
             var connection = await factory.CreateConnectionAsync();
             var channel = await connection.CreateChannelAsync();
             var producer = new RabbitMqEventProducer(connection, channel);
-            await producer.SetupRabbitMQAsync();
             return producer;
         }
 
-        private async Task SetupRabbitMQAsync()
-        {
-            // Exchange
-            await _channel.ExchangeDeclareAsync("login-exchange", ExchangeType.Direct);
-
-            // queue
-            await _channel.QueueDeclareAsync("login-success-queue", durable: true, exclusive: false, autoDelete: false);
-            await _channel.QueueDeclareAsync("login-failed-queue", durable: true, exclusive: false, autoDelete: false);
-
-            // Bindings
-            await _channel.QueueBindAsync("login-success-queue", "login-exchange", "success");
-            await _channel.QueueBindAsync("login-failed-queue", "login-exchange", "failed");
-        }
+   
 
         public async Task PublicarLoginExitoso(string mensaje)
         {
