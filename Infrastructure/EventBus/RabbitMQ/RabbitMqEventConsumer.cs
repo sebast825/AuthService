@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class RabbitMqEventConsumer : IAsyncDisposable
+    public class RabbitMqEventConsumer : IEventConsumer,IAsyncDisposable
     {
         private IConnection? _connection;
         private IChannel? _channel;
@@ -47,7 +47,7 @@ namespace Infrastructure.EventBus.RabbitMQ
             await _channel.QueueBindAsync("login-success-queue", "login-exchange", "success");
             await _channel.QueueBindAsync("login-failed-queue", "login-exchange", "failed");
         }
-        public async Task ConsumirExitosos()
+        public async Task StartConsumingSuccessfulLogins()
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
@@ -64,7 +64,7 @@ namespace Infrastructure.EventBus.RabbitMQ
                                 consumer: consumer);
         }
 
-        public async Task ConsumirFallidos()
+        public async Task StartConsumingFailedLogins()
         {
             var consumer =  new AsyncEventingBasicConsumer(_channel);
 

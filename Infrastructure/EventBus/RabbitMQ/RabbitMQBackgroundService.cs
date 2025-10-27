@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Core.Interfaces.EventBus;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,10 @@ namespace Infrastructure.EventBus.RabbitMQ
 {
     public class RabbitMQBackgroundService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
-        private RabbitMqEventConsumer? _consumer;
-        public RabbitMQBackgroundService(IServiceProvider serviceProvider)
+        private IEventConsumer? _consumer;
+        public RabbitMQBackgroundService(IEventConsumer eventConsumer)
         {
-            _serviceProvider = serviceProvider;
+            _consumer = eventConsumer;
 
         }
         //curretly ont using stoppingToke, for production we need to configure this
@@ -22,9 +22,8 @@ namespace Infrastructure.EventBus.RabbitMQ
         {
             try
             {
-                _consumer = await RabbitMqEventConsumer.CreateAsync();
-                _consumer.ConsumirExitosos();
-                _consumer.ConsumirFallidos();
+                _consumer.StartConsumingSuccessfulLogins();
+                _consumer.StartConsumingFailedLogins();
                 await Task.Delay(Timeout.Infinite, stoppingToken);
             }
             catch (OperationCanceledException)
@@ -40,10 +39,11 @@ namespace Infrastructure.EventBus.RabbitMQ
         }
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_consumer != null)
+            if (_consumer != null && _consumer is IAsyncDisposable disposable)
             {
-                await _consumer.DisposeAsync();
+                await disposable.DisposeAsync(); // use the "disposable" variable from pattern matching
             }
+
             await base.StopAsync(cancellationToken);
         }
     }

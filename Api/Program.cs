@@ -2,6 +2,7 @@ using Api.Extensions;
 using Aplication.Services;
 using Aplication.UseCases;
 using Core.Interfaces;
+using Core.Interfaces.EventBus;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
@@ -30,6 +31,12 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
+
+builder.Services.AddSingleton<IEventConsumer>( sp =>
+{
+    return Task.Run(() => RabbitMqEventConsumer.CreateAsync()).Result;
+});
+
 
 builder.Services.AddHostedService<RabbitMQBackgroundService>();
 builder.Services.AddScoped(sp =>
