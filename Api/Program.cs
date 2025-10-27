@@ -1,18 +1,20 @@
+using Api.Extensions;
 using Aplication.Services;
 using Aplication.UseCases;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-using Api.Extensions;
+using Infrastructure.EventBus.RabbitMQ;
 using Infrastructure.Repositories;
-using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 
 // Add services to the container.
@@ -28,6 +30,8 @@ builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
+builder.Services.AddHostedService<RabbitMQBackgroundService>();
+
 builder.Services.AddScoped<AuthUseCase>();
 
 builder.Services.AddHttpContextAccessor();
@@ -42,7 +46,14 @@ builder.Services.AddIpRateLimit(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
 
+builder.Services.AddSingleton<WorkProducer>();
+builder.Services.AddSingleton<WorkConsumer>();
+
 var app = builder.Build();
+
+var producer = app.Services.GetRequiredService<WorkProducer>();
+await producer.InitializeAsync();
+
 
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
