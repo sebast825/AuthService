@@ -34,7 +34,7 @@ builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptSer
 builder.Services.AddHostedService<RabbitMQBackgroundService>();
 builder.Services.AddScoped(sp =>
 {
-    return Task.Run(() => WorkProducer.CreateAsync()).Result;
+    return Task.Run(() => RabbitMqEventProducer.CreateAsync()).Result;
 });
       
 

@@ -30,11 +30,11 @@ namespace Aplication.UseCases
         private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
         private readonly ILogger<AuthUseCase> _logger;
-        private readonly WorkProducer _workProducer;
+        private readonly RabbitMqEventProducer _workProducer;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
             ISecurityLoginAttemptService securityLoginAttemptService,
-            ILogger<AuthUseCase> logger, WorkProducer workProducer)
+            ILogger<AuthUseCase> logger, RabbitMqEventProducer workProducer)
         {
             _userServices = userServices;
             _jwtService = jwtService;

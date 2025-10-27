@@ -9,22 +9,22 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class WorkProducer : IAsyncDisposable
+    public class RabbitMqEventProducer : IAsyncDisposable
     {
         private IConnection? _connection;
         private  IChannel? _channel;
-        private WorkProducer(IConnection connection, IChannel channel)
+        private RabbitMqEventProducer(IConnection connection, IChannel channel)
         {
             _connection = connection;
             _channel = channel;
         }
 
-        public static async Task<WorkProducer> CreateAsync(string hostName = "localhost")
+        public static async Task<RabbitMqEventProducer> CreateAsync(string hostName = "localhost")
         {
             var factory = new ConnectionFactory() { HostName = hostName };
             var connection = await factory.CreateConnectionAsync();
             var channel = await connection.CreateChannelAsync();
-            var producer = new WorkProducer(connection, channel);
+            var producer = new RabbitMqEventProducer(connection, channel);
             await producer.SetupRabbitMQAsync();
             return producer;
         }
