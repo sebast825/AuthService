@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class WorkConsumer 
+    public class RabbitMqEventConsumer 
     {
         private IChannel _channel;
 

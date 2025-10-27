@@ -19,7 +19,7 @@ namespace Infrastructure.EventBus.RabbitMQ
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope  = _serviceProvider.CreateScope();
-            WorkConsumer consumer = new WorkConsumer();
+            RabbitMqEventConsumer consumer = new RabbitMqEventConsumer();
             await consumer.InitializeAsync();
 
             // the service remain listening
