@@ -12,18 +12,27 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class RabbitMqEventConsumer 
+    public class RabbitMqEventConsumer : IAsyncDisposable
     {
-        private IChannel _channel;
+        private IConnection? _connection;
+        private IChannel? _channel;
 
-
-        public async Task InitializeAsync(string hostName = "localhost")
+        private RabbitMqEventConsumer(IConnection connection, IChannel channel)
+        {
+            _connection = connection;
+            _channel = channel;
+        }
+        public static async Task<RabbitMqEventConsumer> CreateAsync(string hostName = "localhost")
         {
             var factory = new ConnectionFactory() { HostName = hostName };
-            var _connection = await factory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
-            await SetupRabbitMQ();
+            var connection = await factory.CreateConnectionAsync();
+            var channel = await connection.CreateChannelAsync();
+            var consumer = new RabbitMqEventConsumer( connection,channel);
+            await consumer.SetupRabbitMQ();
+            return consumer;
         }
+
+    
 
         private async Task SetupRabbitMQ()
         {
@@ -70,6 +79,12 @@ namespace Infrastructure.EventBus.RabbitMQ
            await _channel.BasicConsumeAsync(queue: "login-failed-queue",
                                 autoAck: true,
                                 consumer: consumer);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _channel?.CloseAsync();
+            await _connection?.CloseAsync();
         }
     }
 }
