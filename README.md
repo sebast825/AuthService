@@ -1,6 +1,16 @@
 # AuthService
 
+
 ## Run App
+
+### Start RabbitMQ (Docker recommended)
+> Make sure it's running on port 15672
+
+```bash
+
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
+```
+### Run The API
 ```bash
 # Navigate to the API folder
 cd AuthServiceSolution/Api
@@ -57,6 +67,7 @@ AuthServiceSolution/
 - Temporary account lockout after multiple failed attempts
 - Refresh token revocation on logout
 - Secure token validation without sensitive information exposure
+- Queue-based persistence (RabbitMQ) for failed login attempts to prevent database connection pool saturation during brute force attacks
 
 ## Audit & Monitoring
 
@@ -87,7 +98,6 @@ AuthServiceSolution/
 
 ## Future Improvements
 
-- Implement queue-based persistence for failed login attempts to prevent database connection pool saturation during brute force attacks
 - Add proxy configuration middleware to accurately capture real client IP addresses, enhancing security, audit trails, and IP-based blocking in production environments
 - Secure password recovery endpoint with time-limited tokens
 -  Separation of Responsibilities in AuthUseCase
