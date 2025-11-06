@@ -1,48 +1,53 @@
 ﻿using Core.Interfaces.Services;
-using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Collections.Concurrent;
 namespace Aplication.Services
 {
     public class EmailAttemptsService : IEmailAttemptsService
     {
-        private readonly IMemoryCache _cache;
-        //range time until the cache restart
+        //similar t IMemoryCache but is Thrade Safe
+        //if recibe many petitions from the same key will not colapse
+        private readonly ConcurrentDictionary<string, (int attempts, DateTime expiry)> _cache;
         private readonly TimeSpan _window = TimeSpan.FromMinutes(5);
         private readonly int _userLimit = 5;
-     
-        public EmailAttemptsService(IMemoryCache cache) {
-        _cache = cache;
+
+        public EmailAttemptsService()
+        {
+            _cache = new ConcurrentDictionary<string, (int, DateTime)>();
         }
 
         public bool EmailIsBlocked(string emailKey)
         {
-            var emailAttempts = this.GetOrCreateAttempts(emailKey);
-            return emailAttempts >= _userLimit;
+            CleanExpired();
+            var entry = _cache.GetOrAdd(emailKey,
+                k => (0, DateTime.UtcNow.Add(_window)));
+
+            return entry.attempts >= _userLimit;
         }
 
         public void IncrementAttempts(string key)
         {
-            var attempts = GetOrCreateAttempts(key);
-            _cache.Set(key, attempts + 1, _window); // Reset counter after _window 
-        }
-        public void ResetAttempts(string key)
-        {
-            _cache.Remove(key);
+            CleanExpired();
+            _cache.AddOrUpdate(key,
+                (1, DateTime.UtcNow.Add(_window)),
+                (k, v) =>
+                {
+                    var newAttempts = v.attempts + 1;
+                    return (newAttempts, v.expiry);
+                });
         }
 
-        private int GetOrCreateAttempts(string key)
+        public void ResetAttempts(string key)
         {
-            int attempts = _cache.GetOrCreate<int>(key, e =>
+            _cache.TryRemove(key, out _);
+        }
+
+        private void CleanExpired()
+        {
+            var now = DateTime.UtcNow;
+            foreach (var item in _cache.Where(x => x.Value.expiry <= now).ToList())
             {
-                e.AbsoluteExpirationRelativeToNow = _window;
-                return 0;
-            });
-            return attempts;
+                _cache.TryRemove(item.Key, out _);
+            }
         }
     }
 }
