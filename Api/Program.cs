@@ -10,6 +10,8 @@ using Infrastructure.EventBus.RabbitMQ;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
+using AspNetCoreRateLimit;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
@@ -25,7 +27,7 @@ builder.Services.AddScoped<ISecurityLoginAttemptRepository,SecurityLoginAttemptR
 builder.Services.AddScoped<IUserServices, UserService>();
 builder.Services.AddScoped<IJwtService,JwtService> ();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-builder.Services.AddScoped<IEmailAttemptsService,EmailAttemptsService> ();
+builder.Services.AddSingleton<IEmailAttemptsService,EmailAttemptsService> ();
 builder.Services.AddScoped<IUserLoginHistoryService, UserLoginHistoryService>();
 builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptService>();
 
@@ -51,7 +53,7 @@ builder.Services.AddSwaggerGen();
 
 //--------------------------EXTENSIONS----------------------------------------
 builder.Services.AddIpRateLimit(builder.Configuration);
-//------------JWT------------
+//-----------------------------JWT--------------------------------------------
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerJwt(builder.Configuration);
 
@@ -72,6 +74,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
+app.UseIpRateLimiting();
 
 app.UseHttpsRedirection();
 

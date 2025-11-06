@@ -17,8 +17,9 @@ namespace Api.Controllers
             _refreshTokenService = refreshTokenService;
         }
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto loginDto)
+        public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequestDto loginDto)
         {
+            Console.WriteLine(loginDto);
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
             return Ok(await _authUseCase.LoginAsync(loginDto, ipAddress, deviceInfo));
