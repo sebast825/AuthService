@@ -1,4 +1,5 @@
-﻿using Core.Dto.SecurityLoginAttempt;
+﻿using Core.Constants;
+using Core.Dto.SecurityLoginAttempt;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -18,33 +19,26 @@ namespace Aplication.Services
         {
             _securityLoginAttemptRepository = securityLoginAttemptRepository;
         }
-        public async Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo)
+        public async Task AddFailedLoginAttemptAsync(SecurityLoginAttempt attempt)
         {
-            SecurityLoginAttempt securityLoginAttempt = new SecurityLoginAttempt()
-            {
-                Email = email,
-                FailureReason = failureReason,
-                IpAddress = ipAddrress,
-                DeviceInfo = deviceInfo
-
-            };
-
-            await _securityLoginAttemptRepository.AddAsync(securityLoginAttempt);
+            await _securityLoginAttemptRepository.AddAsync(attempt);
         }
         public async Task<List<SecurityLoginAttemptResponseDto>> GetAllAsync()
         {
             List<SecurityLoginAttempt> securityLoginAttemptList = await _securityLoginAttemptRepository.GetAllAsync();
 
+            return securityLoginAttemptList.Select(attempt =>
 
-            return securityLoginAttemptList.Select(attempt => new SecurityLoginAttemptResponseDto
-            {
-                Id = attempt.Id,
-                CreatedAt = attempt.CreatedAt,
-                IpAddress = attempt.IpAddress,
-                DeviceInfo = attempt.DeviceInfo,
-                Email = attempt.Email,
-                FailureReason = attempt.FailureReason
-            }).ToList();
+                new SecurityLoginAttemptResponseDto
+                {
+                    Id = attempt.Id,
+                    CreatedAt = attempt.CreatedAt,
+                    IpAddress = attempt.IpAddress,
+                    DeviceInfo = attempt.DeviceInfo,
+                    Email = attempt.Email,
+                    FailureReason = attempt.FailureReason
+                }
+            ).ToList();
         }
     }
 }

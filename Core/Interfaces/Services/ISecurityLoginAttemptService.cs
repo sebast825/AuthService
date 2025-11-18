@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
 {
     public interface ISecurityLoginAttemptService
     {
-        Task AddFailedLoginAttemptAsync(string email, string failureReason, string ipAddrress, string deviceInfo);
+        Task AddFailedLoginAttemptAsync(SecurityLoginAttempt attempt);
         Task<List<SecurityLoginAttemptResponseDto>> GetAllAsync();
     }
 }

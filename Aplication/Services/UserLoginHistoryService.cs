@@ -13,28 +13,23 @@ namespace Aplication.Services
     public class UserLoginHistoryService : IUserLoginHistoryService
     {
         private readonly IUserLoginHistoryRepository _loginAttemptRepository;
-        public UserLoginHistoryService(IUserLoginHistoryRepository loginAttemptRepository) {
+        public UserLoginHistoryService(IUserLoginHistoryRepository loginAttemptRepository)
+        {
             _loginAttemptRepository = loginAttemptRepository;
         }
-        public async Task AddSuccessAttemptAsync(int userId, string ip, string deviceInfo)
+        public async Task AddSuccessAttemptAsync(UserLoginHistory userLoginHistory)
         {
-            UserLoginHistory loginAttempt = new UserLoginHistory()
-            {
-                UserId = userId,
-                IpAddress = ip,
-                DeviceInfo = deviceInfo
-            };
-            await _loginAttemptRepository.AddAsync(loginAttempt);            
+            await _loginAttemptRepository.AddAsync(userLoginHistory);
         }
 
         public async Task<List<UserLoginHistoryResponseDto>> GetAllByUserIdAsync(int userId)
         {
-            List<UserLoginHistory> userLoginHistory =  await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
+            List<UserLoginHistory> userLoginHistory = await _loginAttemptRepository.GetAllAsync(x => x.UserId == userId);
 
             return userLoginHistory.Select(history => new UserLoginHistoryResponseDto
             {
                 Id = history.Id,
-                CreatedAt = history.CreatedAt,  
+                CreatedAt = history.CreatedAt,
                 UserId = history.UserId,
                 IpAddress = history.IpAddress,
                 DeviceInfo = history.DeviceInfo
