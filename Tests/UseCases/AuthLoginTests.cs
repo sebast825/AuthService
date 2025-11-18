@@ -98,11 +98,10 @@ namespace Tests.UseCases
 
         }
         [TestMethod]
-        public async Task LoginAsync_WhenCredentialsAreValid_ShouldThrow()
+        public async Task LoginAsync_WhenCredentialsAreInvalid_ShouldThrow()
         {
             // Arrange
             var loginDto = new LoginRequestDto { Email = "test@test.com", Password = "1234" };
-            var userResponse = new UserResponseDto { Id = 1, FullName = "Carmelo Sanchez" };
 
             _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(false);
             _mockUserServices.Setup(s => s.ValidateCredentialsAsync(loginDto))
@@ -115,7 +114,6 @@ namespace Tests.UseCases
             // Assert
             Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
             _mockEmailAttemptsService.Verify(s => s.IncrementAttempts(loginDto.Email), Times.Once);
-           // _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(securityAttempt), Times.Once);
             _mockSecurityLoginAttemptService.Verify(
                 s => s.AddFailedLoginAttemptAsync(
                     It.Is<SecurityLoginAttempt>(a =>
