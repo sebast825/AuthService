@@ -81,6 +81,7 @@ namespace Tests.UseCases
                 .Returns("jwt_token");
             _mockRefreshTokenService.Setup(s => s.CreateRefreshToken(userResponse.Id))
                 .Returns(new RefreshToken { Token = "refresh_token" });
+            UserLoginHistory loginHistory = LoginEventMapper.LoginHistoryMapper(userId, "127.0.0.1", "device");
 
             // Act
             var result = await _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device");
@@ -91,10 +92,16 @@ namespace Tests.UseCases
             Assert.AreEqual(userResponse, result.User);
 
             _mockEmailAttemptsService.Verify(s => s.ResetAttempts(loginDto.Email), Times.Once);
-            _mockLoginAttemptsService.Verify(s => s.AddSuccessAttemptAsync(userResponse.Id, "127.0.0.1", "device"), Times.Once);
             _mockRefreshTokenService.Verify(s => s.AddAsync(It.IsAny<RefreshToken>()), Times.Once);
             _mockRefreshTokenService.Verify(s => s.RevokeRefreshTokenIfExistAsync(userId), Times.Once);
-
+            _mockLoginAttemptsService.Verify(
+               s => s.AddSuccessAttemptAsync(
+                   It.Is<UserLoginHistory>(a =>
+                       a.UserId == loginHistory.UserId&&
+                       a.IpAddress == loginHistory.IpAddress &&
+                       a.DeviceInfo == loginHistory.DeviceInfo)
+           ),
+           Times.Once);
 
         }
         [TestMethod]

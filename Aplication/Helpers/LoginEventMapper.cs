@@ -12,7 +12,7 @@ namespace Aplication.Helpers
 {
     internal static class LoginEventMapper
     {
-        public  static SecurityLoginAttempt SecurityLoginAttemptMapper(string email, LoginFailureReasons reason, string ipAddrress, string deviceInfo)
+        public static SecurityLoginAttempt SecurityLoginAttemptMapper(string email, LoginFailureReasons reason, string ipAddrress, string deviceInfo)
         {
             return new SecurityLoginAttempt()
             {
@@ -21,6 +21,15 @@ namespace Aplication.Helpers
                 IpAddress = ipAddrress,
                 DeviceInfo = deviceInfo,
             };
-    }
+        }
+        public static UserLoginHistory LoginHistoryMapper(int userId, string ipAddrress, string deviceInfo)
+        {
+            return new UserLoginHistory()
+            {
+                UserId = userId,
+                IpAddress = ipAddrress,
+                DeviceInfo = deviceInfo,
+            };
+        }
     }
 }

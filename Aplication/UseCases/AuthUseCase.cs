@@ -79,7 +79,8 @@ namespace Aplication.UseCases
             {
                 try
                 {
-                    SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.TooManyAttempts, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+                    SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.TooManyAttempts,
+                        loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
 
                     await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
 
@@ -101,21 +102,22 @@ namespace Aplication.UseCases
         {
 
             _emailAttemptsService.ResetAttempts(loginAttemptContext.Email);
-            await TryAddSuccessAttemptAsync(userResponseDto.Id, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+            UserLoginHistory userLoginHistory = LoginEventMapper.LoginHistoryMapper(userResponseDto.Id, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+            await TryAddSuccessAttemptAsync(userLoginHistory);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
             return authResponseDto;
         }
-        private async Task TryAddSuccessAttemptAsync(int userId, string ipAddress, string deviceInfo)
+        private async Task TryAddSuccessAttemptAsync(UserLoginHistory userLoginHistory)
 
         {
             try
             {
-                await _loginAttemptsService.AddSuccessAttemptAsync(userId, ipAddress, deviceInfo);
+                await _loginAttemptsService.AddSuccessAttemptAsync(userLoginHistory);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to audit login success for user {UserId}", userId);
+                _logger.LogWarning(ex, "Failed to audit login success for user {UserId}", userLoginHistory.UserId);
 
             }
         }
@@ -137,9 +139,10 @@ namespace Aplication.UseCases
         private async Task RegisterFailedLoginAndThrowAsync(LoginAttemptContext loginAttemptContext)
         {
             _emailAttemptsService.IncrementAttempts(loginAttemptContext.Email);
-            SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.InvalidCredentials, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
-
+            SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.InvalidCredentials,
+                loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
             await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
+
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
 
