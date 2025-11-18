@@ -16,8 +16,8 @@ namespace Infrastructure.EventBus.RabbitMQ
     {
         //wait the method to be called and then init
         private readonly Lazy<Task> _initializationTask;
-        private IConnection? _connection;
-        private  IChannel? _channel;
+        private IConnection _connection;
+        private  IChannel _channel;
         public RabbitMqEventProducer()
         {
             _initializationTask = new Lazy<Task>(()=>InitAsync());
@@ -39,8 +39,8 @@ namespace Infrastructure.EventBus.RabbitMQ
         }
         public async ValueTask DisposeAsync()
         {
-            await _channel?.CloseAsync();
-            await _connection?.CloseAsync();
+            await _channel.CloseAsync();
+            await _connection.CloseAsync();
         }
 
         public async Task PublishFailedLoginAttemptAsync(SecurityLoginAttempt securityAttempt)

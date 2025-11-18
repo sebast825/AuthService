@@ -17,8 +17,8 @@ namespace Infrastructure.EventBus.RabbitMQ
 {
     public class RabbitMqEventConsumer : IEventConsumer, IAsyncDisposable
     {
-        private IConnection? _connection;
-        private IChannel? _channel;
+        private IConnection _connection;
+        private IChannel _channel;
         private readonly IServiceProvider _serviceProvider;
         public RabbitMqEventConsumer(IServiceProvider serviceProvider)
         {
@@ -97,8 +97,8 @@ namespace Infrastructure.EventBus.RabbitMQ
 
         public async ValueTask DisposeAsync()
         {
-            await _channel?.CloseAsync();
-            await _connection?.CloseAsync();
+            await _channel.CloseAsync();
+            await _connection.CloseAsync();
         }
     }
 }
