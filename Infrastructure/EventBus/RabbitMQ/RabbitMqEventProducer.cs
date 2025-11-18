@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
@@ -53,8 +54,8 @@ namespace Infrastructure.EventBus.RabbitMQ
         public async Task PublishFailedLoginAttemptAsync(SecurityLoginAttempt securityAttempt)
         {
             await _initializationTask.Value;
-
-            var body = Encoding.UTF8.GetBytes("message");
+            var json = JsonSerializer.Serialize(securityAttempt);
+            var body = Encoding.UTF8.GetBytes(json);
             await _channel.BasicPublishAsync("login-exchange", "failed", body);
         }
     }

@@ -1,6 +1,8 @@
-﻿using Core.Interfaces.EventBus;
+﻿using Core.Entities;
+using Core.Interfaces.EventBus;
 using Core.Interfaces.Services;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -13,11 +15,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.EventBus.RabbitMQ
 {
-    public class RabbitMqEventConsumer : IEventConsumer,IAsyncDisposable
+    public class RabbitMqEventConsumer : IEventConsumer, IAsyncDisposable
     {
         private IConnection? _connection;
         private IChannel? _channel;
-   
+        private readonly IServiceProvider _serviceProvider;
+        public RabbitMqEventConsumer(IServiceProvider serviceProvider)
+        {
+
+            _serviceProvider = serviceProvider;
+        }
         public async Task InitAsync(string hostName = "localhost")
         {
             var factory = new ConnectionFactory() { HostName = hostName };
@@ -53,26 +60,34 @@ namespace Infrastructure.EventBus.RabbitMQ
                 Console.WriteLine($"Login exitoso: {mensaje}");
             };
 
-            await _channel.BasicConsumeAsync(queue: "login-success-queue",
-                                autoAck: true,
-                                consumer: consumer);
+            await _channel.BasicConsumeAsync(
+                queue: "login-success-queue",
+                autoAck: true,
+                consumer: consumer
+                );
         }
 
         public async Task StartConsumingFailedLogins()
         {
-            var consumer =  new AsyncEventingBasicConsumer(_channel);
+            var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.ReceivedAsync += async(model, ea) =>
+            consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var mensaje = Encoding.UTF8.GetString(body);
 
-                Console.WriteLine($"Login fallido: {mensaje}");
+                SecurityLoginAttempt loginAttempt = JsonSerializer.Deserialize<SecurityLoginAttempt>(mensaje);
+
+                using var scope = _serviceProvider.CreateScope();
+                var loginService = scope.ServiceProvider.GetRequiredService<ISecurityLoginAttemptService>();
+                await loginService.AddFailedLoginAttemptAsync(loginAttempt);
             };
 
-           await _channel.BasicConsumeAsync(queue: "login-failed-queue",
-                                autoAck: true,
-                                consumer: consumer);
+            await _channel.BasicConsumeAsync(
+                queue: "login-failed-queue",
+                autoAck: true,
+                consumer: consumer
+                );
         }
 
         public async ValueTask DisposeAsync()

@@ -37,8 +37,6 @@ namespace Tests.UseCases
         private Mock<IRefreshTokenService> _mockRefreshTokenService;
         private Mock<IEmailAttemptsService> _mockEmailAttemptsService;
         private Mock<IUserLoginHistoryService> _mockLoginAttemptsService;
-        private Mock<ISecurityLoginAttemptService> _mockSecurityLoginAttemptService;
-        private Mock<IDbContextTransaction> _mockTransaction;
         private Mock<ILogger<AuthUseCase>> _mockLogger;
         private Mock<IEventProducer> _eventProducer;
         private AuthUseCase _authUseCase;
@@ -51,7 +49,6 @@ namespace Tests.UseCases
             _mockRefreshTokenService = new Mock<IRefreshTokenService>();
             _mockEmailAttemptsService = new Mock<IEmailAttemptsService>();
             _mockLoginAttemptsService = new Mock<IUserLoginHistoryService>();
-            _mockSecurityLoginAttemptService = new Mock<ISecurityLoginAttemptService>();
             _eventProducer = new Mock<IEventProducer>();
             _mockLogger = new Mock<ILogger<AuthUseCase>>();
 
@@ -63,7 +60,6 @@ namespace Tests.UseCases
                 _mockRefreshTokenService.Object,
                 _mockEmailAttemptsService.Object,
                 _mockLoginAttemptsService.Object,
-                _mockSecurityLoginAttemptService.Object,
                 _mockLogger.Object,
                 _eventProducer.Object
             );
@@ -124,8 +120,8 @@ namespace Tests.UseCases
             // Assert
             Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
             _mockEmailAttemptsService.Verify(s => s.IncrementAttempts(loginDto.Email), Times.Once);
-            _mockSecurityLoginAttemptService.Verify(
-                s => s.AddFailedLoginAttemptAsync(
+            _eventProducer.Verify(
+                s => s.PublishFailedLoginAttemptAsync(
                     It.Is<SecurityLoginAttempt>(a =>
                         a.Email == securityAttempt.Email &&
                         a.FailureReason == securityAttempt.FailureReason &&
@@ -133,7 +129,6 @@ namespace Tests.UseCases
                         a.DeviceInfo == securityAttempt.DeviceInfo)
             ),
             Times.Once);
-            _eventProducer.Verify(s => s.PublishFailedLoginAttemptAsync("Failed Attempt"), Times.Once);
 
         }
         [TestMethod]

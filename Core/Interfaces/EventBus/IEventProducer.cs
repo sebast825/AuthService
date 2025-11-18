@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,6 @@ namespace Core.Interfaces.EventBus
     public interface IEventProducer
     {
         Task PublishSuccessfulLoginAttemptAsync(string message);
-        Task PublishFailedLoginAttemptAsync(string message);
+        Task PublishFailedLoginAttemptAsync(SecurityLoginAttempt securityAttempt);
     }
 }

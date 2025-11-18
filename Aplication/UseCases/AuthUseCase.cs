@@ -30,12 +30,10 @@ namespace Aplication.UseCases
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IEmailAttemptsService _emailAttemptsService;
         private readonly IUserLoginHistoryService _loginAttemptsService;
-        private readonly ISecurityLoginAttemptService _securityLoginAttemptService;
         private readonly ILogger<AuthUseCase> _logger;
         private readonly IEventProducer _eventProducer;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
             IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
-            ISecurityLoginAttemptService securityLoginAttemptService,
             ILogger<AuthUseCase> logger, IEventProducer eventProducer)
         {
             _userServices = userServices;
@@ -43,7 +41,6 @@ namespace Aplication.UseCases
             _refreshTokenService = refreshTokenService;
             _emailAttemptsService = EmailAttemptsService;
             _loginAttemptsService = loginAttemptsService;
-            _securityLoginAttemptService = securityLoginAttemptService;
             _logger = logger;
             _eventProducer = eventProducer;
         }
@@ -60,7 +57,6 @@ namespace Aplication.UseCases
             }
             catch (InvalidCredentialException ex)
             {
-                await _eventProducer.PublishFailedLoginAttemptAsync("Failed Attempt");
                 await RegisterFailedLoginAndThrowAsync(loginAttemptContext);
                 throw;
             }
@@ -86,9 +82,7 @@ namespace Aplication.UseCases
                 {
                     SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.TooManyAttempts,
                         loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
-
-                    await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
-
+                    await _eventProducer.PublishFailedLoginAttemptAsync(securityAttempt);
                 }
                 catch (Exception ex)
                 {
@@ -108,6 +102,7 @@ namespace Aplication.UseCases
 
             _emailAttemptsService.ResetAttempts(loginAttemptContext.Email);
             UserLoginHistory userLoginHistory = LoginEventMapper.LoginHistoryMapper(userResponseDto.Id, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+            await _eventProducer.PublishSuccessfulLoginAttemptAsync("SE POSTEO CORRECATEMTNE");
             await TryAddSuccessAttemptAsync(userLoginHistory);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
@@ -144,10 +139,11 @@ namespace Aplication.UseCases
         private async Task RegisterFailedLoginAndThrowAsync(LoginAttemptContext loginAttemptContext)
         {
             _emailAttemptsService.IncrementAttempts(loginAttemptContext.Email);
+
+
             SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.InvalidCredentials,
                 loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
-            await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
-
+            await _eventProducer.PublishFailedLoginAttemptAsync(securityAttempt);
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
 

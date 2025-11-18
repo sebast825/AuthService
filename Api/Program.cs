@@ -35,7 +35,8 @@ builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptSer
 builder.Services.AddScoped<AuthUseCase>();
 
 //--------------RABBITMQ-------------------------------------------------
-builder.Services.AddSingleton<IEventConsumer, RabbitMqEventConsumer>();
+builder.Services.AddSingleton<RabbitMqEventConsumer>();
+builder.Services.AddSingleton<IEventConsumer>(sp => sp.GetRequiredService<RabbitMqEventConsumer>());
 builder.Services.AddSingleton<IEventProducer,RabbitMqEventProducer>();
 
 builder.Services.AddHostedService<RabbitMQBackgroundService>();      
