@@ -52,12 +52,11 @@ namespace Aplication.UseCases
             try
             {
                 UserResponseDto userResponseDto = await _userServices.ValidateCredentialsAsync(loginDto);
-                return await HandleSuccessfulLoginAsync(userResponseDto, loginDto.Email, ipAddress, deviceInfo);
+                return await HandleSuccessfulLoginAsync(userResponseDto, loginAttemptContext);
             }
             catch (InvalidCredentialException ex)
             {
-                SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginDto.Email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
-                await RegisterFailedLoginAndThrowAsync(securityAttempt);
+                await RegisterFailedLoginAndThrowAsync(loginAttemptContext);
                 throw;
             }
 
@@ -89,7 +88,7 @@ namespace Aplication.UseCases
                 {
                     _logger.LogWarning(
                         "Blocked login attempt detected for {Email} from {IpAddress} ({DeviceInfo})",
-                      loginAttemptContext.Email,loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+                      loginAttemptContext.Email, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
                 }
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
@@ -98,11 +97,11 @@ namespace Aplication.UseCases
 
         /* Record email attempt in DB and reset in cache.
          * Call fn to generate tokens */
-        private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, string email, string ipAddress, string deviceInfo)
+        private async Task<AuthResponseDto> HandleSuccessfulLoginAsync(UserResponseDto userResponseDto, LoginAttemptContext loginAttemptContext)
         {
 
-            _emailAttemptsService.ResetAttempts(email);
-            await TryAddSuccessAttemptAsync(userResponseDto.Id, ipAddress, deviceInfo);
+            _emailAttemptsService.ResetAttempts(loginAttemptContext.Email);
+            await TryAddSuccessAttemptAsync(userResponseDto.Id, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
             return authResponseDto;
@@ -135,9 +134,11 @@ namespace Aplication.UseCases
             };
         }
 
-        private async Task RegisterFailedLoginAndThrowAsync(SecurityLoginAttempt securityAttempt)
+        private async Task RegisterFailedLoginAndThrowAsync(LoginAttemptContext loginAttemptContext)
         {
-            _emailAttemptsService.IncrementAttempts(securityAttempt.Email);
+            _emailAttemptsService.IncrementAttempts(loginAttemptContext.Email);
+            SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.InvalidCredentials, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
+
             await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
