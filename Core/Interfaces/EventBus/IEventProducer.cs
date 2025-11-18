@@ -9,7 +9,7 @@ namespace Core.Interfaces.EventBus
 {
     public interface IEventProducer
     {
-        Task PublishSuccessfulLoginAttemptAsync(string message);
+        Task PublishSuccessfulLoginAttemptAsync(UserLoginHistory userLoginHistory);
         Task PublishFailedLoginAttemptAsync(SecurityLoginAttempt securityAttempt);
     }
 }

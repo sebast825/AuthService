@@ -55,9 +55,14 @@ namespace Infrastructure.EventBus.RabbitMQ
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
-                var mensaje = Encoding.UTF8.GetString(body);
+                var message = Encoding.UTF8.GetString(body);
 
-                Console.WriteLine($"Login exitoso: {mensaje}");
+                UserLoginHistory loginAttempt = JsonSerializer.Deserialize<UserLoginHistory>(message);
+
+                using var scope = _serviceProvider.CreateScope();
+                var loginHistoryService = scope.ServiceProvider.GetRequiredService<IUserLoginHistoryService>();
+                await loginHistoryService.AddSuccessAttemptAsync(loginAttempt);
+
             };
 
             await _channel.BasicConsumeAsync(
@@ -74,13 +79,13 @@ namespace Infrastructure.EventBus.RabbitMQ
             consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
-                var mensaje = Encoding.UTF8.GetString(body);
+                var message = Encoding.UTF8.GetString(body);
 
-                SecurityLoginAttempt loginAttempt = JsonSerializer.Deserialize<SecurityLoginAttempt>(mensaje);
+                SecurityLoginAttempt loginAttempt = JsonSerializer.Deserialize<SecurityLoginAttempt>(message);
 
                 using var scope = _serviceProvider.CreateScope();
-                var loginService = scope.ServiceProvider.GetRequiredService<ISecurityLoginAttemptService>();
-                await loginService.AddFailedLoginAttemptAsync(loginAttempt);
+                var securityLoginAttemptService = scope.ServiceProvider.GetRequiredService<ISecurityLoginAttemptService>();
+                await securityLoginAttemptService.AddFailedLoginAttemptAsync(loginAttempt);
             };
 
             await _channel.BasicConsumeAsync(

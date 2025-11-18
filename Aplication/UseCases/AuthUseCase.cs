@@ -29,18 +29,16 @@ namespace Aplication.UseCases
         private readonly IJwtService _jwtService;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IEmailAttemptsService _emailAttemptsService;
-        private readonly IUserLoginHistoryService _loginAttemptsService;
         private readonly ILogger<AuthUseCase> _logger;
         private readonly IEventProducer _eventProducer;
         public AuthUseCase(IUserServices userServices, IJwtService jwtService, IRefreshTokenService refreshTokenService,
-            IEmailAttemptsService EmailAttemptsService, IUserLoginHistoryService loginAttemptsService,
+            IEmailAttemptsService EmailAttemptsService,
             ILogger<AuthUseCase> logger, IEventProducer eventProducer)
         {
             _userServices = userServices;
             _jwtService = jwtService;
             _refreshTokenService = refreshTokenService;
             _emailAttemptsService = EmailAttemptsService;
-            _loginAttemptsService = loginAttemptsService;
             _logger = logger;
             _eventProducer = eventProducer;
         }
@@ -102,7 +100,6 @@ namespace Aplication.UseCases
 
             _emailAttemptsService.ResetAttempts(loginAttemptContext.Email);
             UserLoginHistory userLoginHistory = LoginEventMapper.LoginHistoryMapper(userResponseDto.Id, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
-            await _eventProducer.PublishSuccessfulLoginAttemptAsync("SE POSTEO CORRECATEMTNE");
             await TryAddSuccessAttemptAsync(userLoginHistory);
             AuthResponseDto authResponseDto = await HandleTokenAsync(userResponseDto);
 
@@ -113,7 +110,7 @@ namespace Aplication.UseCases
         {
             try
             {
-                await _loginAttemptsService.AddSuccessAttemptAsync(userLoginHistory);
+                await _eventProducer.PublishSuccessfulLoginAttemptAsync(userLoginHistory);
             }
             catch (Exception ex)
             {
