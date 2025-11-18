@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.EventBus;
+using Core.Interfaces.Services;
 using Microsoft.EntityFrameworkCore.Metadata;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,23 +17,16 @@ namespace Infrastructure.EventBus.RabbitMQ
     {
         private IConnection? _connection;
         private IChannel? _channel;
-
-        private RabbitMqEventConsumer(IConnection connection, IChannel channel)
-        {
-            _connection = connection;
-            _channel = channel;
-        }
-        public static async Task<RabbitMqEventConsumer> CreateAsync(string hostName = "localhost")
+   
+        public async Task InitAsync(string hostName = "localhost")
         {
             var factory = new ConnectionFactory() { HostName = hostName };
-            var connection = await factory.CreateConnectionAsync();
-            var channel = await connection.CreateChannelAsync();
-            var consumer = new RabbitMqEventConsumer( connection,channel);
-            await consumer.SetupRabbitMQ();
-            return consumer;
+            _connection = await factory.CreateConnectionAsync();
+            _channel = await _connection.CreateChannelAsync();
+
+            await SetupRabbitMQ();
         }
 
-    
 
         private async Task SetupRabbitMQ()
         {

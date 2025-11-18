@@ -34,17 +34,12 @@ builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptSer
 
 builder.Services.AddScoped<AuthUseCase>();
 
-builder.Services.AddSingleton<IEventConsumer>( sp =>
-{
-    return Task.Run(() => RabbitMqEventConsumer.CreateAsync()).Result;
-});
-builder.Services.AddSingleton<IEventProducer>(sp =>
-{
-    return Task.Run(() => RabbitMqEventProducer.CreateAsync()).Result;
-});
+//--------------RABBITMQ-------------------------------------------------
+builder.Services.AddSingleton<IEventConsumer, RabbitMqEventConsumer>();
+builder.Services.AddSingleton<IEventProducer,RabbitMqEventProducer>();
 
 builder.Services.AddHostedService<RabbitMQBackgroundService>();      
-
+//------------------------------------------------------------------------------
 
 builder.Services.AddHttpContextAccessor();
 
