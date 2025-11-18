@@ -1,4 +1,5 @@
-﻿using Aplication.Services;
+﻿using Aplication.Helpers;
+using Aplication.Services;
 using Aplication.UseCases;
 using Castle.Core.Logging;
 using Core.Constants;
@@ -106,6 +107,7 @@ namespace Tests.UseCases
             _mockEmailAttemptsService.Setup(s => s.EmailIsBlocked(loginDto.Email)).Returns(false);
             _mockUserServices.Setup(s => s.ValidateCredentialsAsync(loginDto))
                 .ThrowsAsync(new InvalidCredentialException(ErrorMessages.InvalidCredentials));
+            SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginDto.Email, LoginFailureReasons.InvalidCredentials, "127.0.0.1", "device");
 
             // Act
             var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _authUseCase.LoginAsync(loginDto, "127.0.0.1", "device"));
@@ -113,7 +115,7 @@ namespace Tests.UseCases
             // Assert
             Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
             _mockEmailAttemptsService.Verify(s => s.IncrementAttempts(loginDto.Email), Times.Once);
-            _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(loginDto.Email, LoginFailureReasons.InvalidCredentials, "127.0.0.1", "device"), Times.Once);
+            _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(securityAttempt), Times.Once);
 
         }
         [TestMethod]
