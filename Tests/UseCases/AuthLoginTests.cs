@@ -50,7 +50,7 @@ namespace Tests.UseCases
             _mockEmailAttemptsService = new Mock<IEmailAttemptsService>();
             _mockLoginAttemptsService = new Mock<IUserLoginHistoryService>();
             _mockSecurityLoginAttemptService = new Mock<ISecurityLoginAttemptService>();
-            _mockLogger = new Mock<ILogger<AuthUseCase>>() ;
+            _mockLogger = new Mock<ILogger<AuthUseCase>>();
 
 
 
@@ -115,8 +115,16 @@ namespace Tests.UseCases
             // Assert
             Assert.AreEqual(ErrorMessages.InvalidCredentials, ex.Message);
             _mockEmailAttemptsService.Verify(s => s.IncrementAttempts(loginDto.Email), Times.Once);
-            _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(securityAttempt), Times.Once);
-
+           // _mockSecurityLoginAttemptService.Verify(s => s.AddFailedLoginAttemptAsync(securityAttempt), Times.Once);
+            _mockSecurityLoginAttemptService.Verify(
+                s => s.AddFailedLoginAttemptAsync(
+                    It.Is<SecurityLoginAttempt>(a =>
+                        a.Email == securityAttempt.Email &&
+                        a.FailureReason == securityAttempt.FailureReason &&
+                        a.IpAddress == securityAttempt.IpAddress &&
+                        a.DeviceInfo == securityAttempt.DeviceInfo)
+            ),
+            Times.Once);
         }
         [TestMethod]
         public async Task LoginAsync_WhenEmailIsBlocked_ShouldThrow()
@@ -141,9 +149,9 @@ namespace Tests.UseCases
             string refreshToken = "refresh";
             string acessToken2 = "acess";
             int userId = 1;
-            RefreshTokenResponseDto refreshTokenDto= new RefreshTokenResponseDto { Token = refreshToken ,UserId = userId, ExpiresAt = DateTime.UtcNow.AddDays(2) };
+            RefreshTokenResponseDto refreshTokenDto = new RefreshTokenResponseDto { Token = refreshToken, UserId = userId, ExpiresAt = DateTime.UtcNow.AddDays(2) };
             _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ReturnsAsync(refreshTokenDto);
-            _mockJwtService.Setup(s => s.GenerateAccessToken(userId.ToString())).Returns(acessToken2);  
+            _mockJwtService.Setup(s => s.GenerateAccessToken(userId.ToString())).Returns(acessToken2);
 
             string acessToken = await _authUseCase.GenerateNewAccessTokenAsync(refreshToken);
 
@@ -154,9 +162,9 @@ namespace Tests.UseCases
         {
             string refreshToken = "token not exist in db";
             string acessToken2 = "acess";
-            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ThrowsAsync(new InvalidCredentialException(ErrorMessages.InvalidToken));           
-            
-            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() =>  _authUseCase.GenerateNewAccessTokenAsync(refreshToken));
+            _mockRefreshTokenService.Setup(s => s.GetValidRefreshTokenAsync(refreshToken)).ThrowsAsync(new InvalidCredentialException(ErrorMessages.InvalidToken));
+
+            var ex = await Assert.ThrowsExceptionAsync<InvalidCredentialException>(() => _authUseCase.GenerateNewAccessTokenAsync(refreshToken));
 
             Assert.AreEqual(ErrorMessages.InvalidToken, ex.Message);
         }
