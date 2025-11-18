@@ -46,7 +46,8 @@ namespace Aplication.UseCases
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginDto, string ipAddress, string deviceInfo)
         {
-            await ThrowAndRegisterIfEmailIsBlockedAsync(loginDto.Email, ipAddress, deviceInfo);
+            LoginAttemptContext loginAttemptContext = new LoginAttemptContext(loginDto.Email, ipAddress, deviceInfo);
+            await ThrowAndRegisterIfEmailIsBlockedAsync(loginAttemptContext);
 
             try
             {
@@ -72,14 +73,14 @@ namespace Aplication.UseCases
 
         }
 
-        private async Task ThrowAndRegisterIfEmailIsBlockedAsync(string email, string ipAddress, string deviceInfo)
+        private async Task ThrowAndRegisterIfEmailIsBlockedAsync(LoginAttemptContext loginAttemptContext)
         {
-            bool emailIsBlocked = _emailAttemptsService.EmailIsBlocked(email);
+            bool emailIsBlocked = _emailAttemptsService.EmailIsBlocked(loginAttemptContext.Email);
             if (emailIsBlocked)
             {
                 try
                 {
-                    SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+                    SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginAttemptContext.Email, LoginFailureReasons.TooManyAttempts, loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
 
                     await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
 
@@ -88,7 +89,7 @@ namespace Aplication.UseCases
                 {
                     _logger.LogWarning(
                         "Blocked login attempt detected for {Email} from {IpAddress} ({DeviceInfo})",
-                        email, ipAddress, deviceInfo);
+                      loginAttemptContext.Email,loginAttemptContext.IpAddress, loginAttemptContext.DeviceInfo);
                 }
                 throw new InvalidOperationException(ErrorMessages.MaxLoginAttemptsExceeded);
 
