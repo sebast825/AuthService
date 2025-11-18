@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Core.Constants
 {
-    public class LoginFailureReasons
+    public enum LoginFailureReasons
     {
-        public const string InvalidCredentials = "Invalid credentials";
-        public const string TooManyAttempts = "Too many attempts";
+        InvalidCredentials,
+        TooManyAttempts
     }
 }

@@ -1,4 +1,5 @@
-﻿using Aplication.Services;
+﻿using Aplication.Helpers;
+using Aplication.Services;
 using Azure.Core;
 using Core.Constants;
 using Core.Dto.Auth;
@@ -54,7 +55,8 @@ namespace Aplication.UseCases
             }
             catch (InvalidCredentialException ex)
             {
-                await RegisterFailedLoginAndThrowAsync(loginDto.Email, ipAddress, deviceInfo);
+                SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(loginDto.Email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
+                await RegisterFailedLoginAndThrowAsync(securityAttempt);
                 throw;
             }
 
@@ -77,10 +79,12 @@ namespace Aplication.UseCases
             {
                 try
                 {
-                    await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+                    SecurityLoginAttempt securityAttempt = LoginEventMapper.SecurityLoginAttemptMapper(email, LoginFailureReasons.TooManyAttempts, ipAddress, deviceInfo);
+
+                    await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
 
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogWarning(
                         "Blocked login attempt detected for {Email} from {IpAddress} ({DeviceInfo})",
@@ -109,9 +113,9 @@ namespace Aplication.UseCases
             {
                 await _loginAttemptsService.AddSuccessAttemptAsync(userId, ipAddress, deviceInfo);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogWarning(ex,"Failed to audit login success for user {UserId}", userId);
+                _logger.LogWarning(ex, "Failed to audit login success for user {UserId}", userId);
 
             }
         }
@@ -130,10 +134,10 @@ namespace Aplication.UseCases
             };
         }
 
-        private async Task RegisterFailedLoginAndThrowAsync(string email, string ipAddress, string deviceInfo)
+        private async Task RegisterFailedLoginAndThrowAsync(SecurityLoginAttempt securityAttempt)
         {
-            _emailAttemptsService.IncrementAttempts(email);
-            await _securityLoginAttemptService.AddFailedLoginAttemptAsync(email, LoginFailureReasons.InvalidCredentials, ipAddress, deviceInfo);
+            _emailAttemptsService.IncrementAttempts(securityAttempt.Email);
+            await _securityLoginAttemptService.AddFailedLoginAttemptAsync(securityAttempt);
             throw new InvalidOperationException(ErrorMessages.InvalidCredentials);
         }
 

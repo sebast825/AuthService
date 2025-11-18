@@ -8,6 +8,7 @@ using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 //dbcontext
@@ -31,7 +32,12 @@ builder.Services.AddScoped<ISecurityLoginAttemptService, SecurityLoginAttemptSer
 builder.Services.AddScoped<AuthUseCase>();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -10,7 +10,7 @@ namespace Aplication.Helpers
 {
     internal static class LoginEventMapper
     {
-        public  static SecurityLoginAttempt SecurityLoginAttemptMapper(string email, string reason, string ipAddrress, string deviceInfo)
+        public  static SecurityLoginAttempt SecurityLoginAttemptMapper(string email, LoginFailureReasons reason, string ipAddrress, string deviceInfo)
         {
             return new SecurityLoginAttempt()
             {
