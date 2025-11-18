@@ -8,6 +8,7 @@ using Core.Dto.RefreshToken;
 using Core.Dto.User;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Interfaces.EventBus;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -39,6 +40,7 @@ namespace Tests.UseCases
         private Mock<ISecurityLoginAttemptService> _mockSecurityLoginAttemptService;
         private Mock<IDbContextTransaction> _mockTransaction;
         private Mock<ILogger<AuthUseCase>> _mockLogger;
+        private Mock<IEventProducer> _eventProducer;
         private AuthUseCase _authUseCase;
 
         [TestInitialize]
@@ -50,6 +52,7 @@ namespace Tests.UseCases
             _mockEmailAttemptsService = new Mock<IEmailAttemptsService>();
             _mockLoginAttemptsService = new Mock<IUserLoginHistoryService>();
             _mockSecurityLoginAttemptService = new Mock<ISecurityLoginAttemptService>();
+            _eventProducer = new Mock<IEventProducer>();
             _mockLogger = new Mock<ILogger<AuthUseCase>>();
 
 
@@ -61,7 +64,8 @@ namespace Tests.UseCases
                 _mockEmailAttemptsService.Object,
                 _mockLoginAttemptsService.Object,
                 _mockSecurityLoginAttemptService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _eventProducer.Object
             );
         }
 
@@ -102,7 +106,6 @@ namespace Tests.UseCases
                        a.DeviceInfo == loginHistory.DeviceInfo)
            ),
            Times.Once);
-
         }
         [TestMethod]
         public async Task LoginAsync_WhenCredentialsAreInvalid_ShouldThrow()
@@ -130,6 +133,8 @@ namespace Tests.UseCases
                         a.DeviceInfo == securityAttempt.DeviceInfo)
             ),
             Times.Once);
+            _eventProducer.Verify(s => s.PublishFailedLoginAttemptAsync("Failed Attempt"), Times.Once);
+
         }
         [TestMethod]
         public async Task LoginAsync_WhenEmailIsBlocked_ShouldThrow()
