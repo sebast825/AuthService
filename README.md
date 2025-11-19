@@ -43,9 +43,11 @@ AuthServiceSolution/
 │
 ├─ Infrastructure/           
 │  ├─ Data/
+│  ├─ EventBus/ 
 │  ├─ Repositories/ 
 │
-├─ Application/              
+├─ Application/
+│  ├─ Helpers/            
 │  ├─ Services/
 │  └─ UseCases/               
 │
@@ -110,6 +112,6 @@ AuthServiceSolution/
 |------------------|----------------------------------------------------|--------------------------------------------------------|
 | UserCoordinator   | Handle user validation, credentials, and account blocking | `_userServices`, `_emailAttemptsService`             |
 | TokenCoordinator  | Generate, revoke, and manage tokens               | `_jwtService`, `_refreshTokenService`                |
-| AuditCoordinator  | Record login audits and failed login attempts     | `_loginAttemptsService`, `_securityLoginAttemptService`, `_logger` |
+| AuditCoordinator  | Record login audits and failed login attempts     | `IEventProducer`, `_logger` |
 
 
