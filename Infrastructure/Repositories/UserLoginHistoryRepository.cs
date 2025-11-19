@@ -28,6 +28,7 @@ namespace Infrastructure.Repositories
             {
                 return await _dataContext.Set<UserLoginHistory>()
                     .Where(predicate)
+                    .AsNoTracking()
                     .ToListAsync();
 
             }

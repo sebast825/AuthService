@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<SecurityLoginAttempt>> GetAllAsync()
         {
-           return await _dataContext.Set<SecurityLoginAttempt>().ToListAsync();
+           return await _dataContext.Set<SecurityLoginAttempt>().AsNoTracking().ToListAsync();
 
         }
     }
