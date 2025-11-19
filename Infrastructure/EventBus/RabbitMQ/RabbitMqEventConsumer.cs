@@ -17,6 +17,7 @@ namespace Infrastructure.EventBus.RabbitMQ
 {
     public class RabbitMqEventConsumer : IEventConsumer, IAsyncDisposable
     {
+        private readonly Lazy<Task> _initializationTask;
         private IConnection _connection;
         private IChannel _channel;
         private readonly IServiceProvider _serviceProvider;
@@ -24,8 +25,10 @@ namespace Infrastructure.EventBus.RabbitMQ
         {
 
             _serviceProvider = serviceProvider;
+            _initializationTask = new Lazy<Task>(() => InitAsync());
+
         }
-        public async Task InitAsync(string hostName = "localhost")
+        private async Task InitAsync(string hostName = "localhost")
         {
             var factory = new ConnectionFactory() { HostName = hostName };
             _connection = await factory.CreateConnectionAsync();
@@ -50,6 +53,7 @@ namespace Infrastructure.EventBus.RabbitMQ
         }
         public async Task StartConsumingSuccessfulLogins()
         {
+            await _initializationTask.Value;
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
             consumer.ReceivedAsync += async (model, ea) =>
@@ -74,6 +78,7 @@ namespace Infrastructure.EventBus.RabbitMQ
 
         public async Task StartConsumingFailedLogins()
         {
+            await _initializationTask.Value;
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
             consumer.ReceivedAsync += async (model, ea) =>

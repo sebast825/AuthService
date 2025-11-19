@@ -13,9 +13,9 @@ namespace Infrastructure.EventBus.RabbitMQ
 {
     public class RabbitMQBackgroundService : BackgroundService
     {
-        private RabbitMqEventConsumer _consumer;
+        private IEventConsumer _consumer;
         private readonly ILogger<RabbitMQBackgroundService> _logger;
-        public RabbitMQBackgroundService(RabbitMqEventConsumer eventConsumer, ILogger<RabbitMQBackgroundService> logger)
+        public RabbitMQBackgroundService(IEventConsumer eventConsumer, ILogger<RabbitMQBackgroundService> logger)
         {
             _consumer = eventConsumer;
             _logger = logger;
@@ -24,11 +24,7 @@ namespace Infrastructure.EventBus.RabbitMQ
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
-            {
-                _logger.LogInformation("Initializing RabbitMQ...");
-                await _consumer.InitAsync("localhost");
-                _logger.LogInformation("RabbitMQ initialized successfully.");
-
+            {              
                 _logger.LogInformation("Starting RabbitMQ Background Service. Preparing event consumers.");
                 _consumer.StartConsumingSuccessfulLogins();
                 _consumer.StartConsumingFailedLogins();
